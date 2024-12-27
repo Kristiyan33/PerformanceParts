@@ -1,65 +1,44 @@
 'use client'; // Necessary for React hooks in Next.js App directory
 
 import { useState, useEffect } from 'react';
-import { addToCart } from '../../lib/cartFunctions';
-import { auth } from '../../lib/firebase'; // Import Firebase auth
+import { fetchParts } from '../../lib/partsFunctions';
+import { addToCart } from '../../lib/cartFunctions'; // Adjust the path to your cart functions
+import { auth } from '../../lib/firebase'; // Adjust the path to your Firebase setup
 
 export default function ShopPage() {
-  const [cart, setCart] = useState([]);
-  const [user, setUser] = useState(null);
+  const [parts, setParts] = useState([]); // Parts fetched from the database
+  const [cart, setCart] = useState([]); // Local cart state
+  const [user, setUser] = useState(null); // Authentication state
+  const [selectedCategory, setSelectedCategory] = useState('all'); // Category filtering
 
-  // Check for the authenticated user
+  // Firebase Authentication Listener
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        setUser(null);
-      }
+      setUser(currentUser || null);
     });
     return () => unsubscribe();
   }, []);
 
-  // Static data for car parts
-  const parts = [
-    { 
-      id: 1, 
-      name: 'Engine Performance Kit', 
-      description: 'Boost your engine power with this high-performance kit.', 
-      price: 499.99,
-      image: '/images/home-img-01.jpg' // Replace with actual image URLs
-    },
-    { 
-      id: 2, 
-      name: 'Suspension Upgrade', 
-      description: 'Enhance your car’s handling with upgraded suspension components.', 
-      price: 299.99,
-      image: '/images/suspension kit.jpg' // Replace with actual image URLs
-    },
-    { 
-      id: 3, 
-      name: 'Carbon Fiber Hood', 
-      description: 'Lightweight carbon fiber hood to reduce weight and improve aerodynamics.', 
-      price: 799.99,
-      image: '/images/hoood.jpg' // Replace with actual image URLs
-    },
-    { 
-      id: 4, 
-      name: 'Turbocharger Kit', 
-      description: 'Upgrade your engine with this turbocharger kit for more power and torque.', 
-      price: 999.99,
-      image: '/images/turbooo.jpg' // Replace with actual image URLs
-    },
-    { 
-      id: 5, 
-      name: 'Brake Kit', 
-      description: 'High-performance brake kit for better stopping power and safety.', 
-      price: 399.99,
-      image: '/images/brake kit.jpg' // Replace with actual image URLs
-    },
-  ];
+  // Fetch parts from Firestore
+  useEffect(() => {
+    const loadParts = async () => {
+      try {
+        const partsList = await fetchParts();
+        setParts(partsList);
+      } catch (error) {
+        console.error('Error fetching parts:', error);
+      }
+    };
 
-  // Function to handle adding parts to the cart
+    loadParts();
+  }, []);
+
+  // Filter items based on the selected category
+  const filteredParts = selectedCategory === 'all'
+    ? parts
+    : parts.filter((part) => part.category === selectedCategory);
+
+  // Add to Cart Handler
   const handleAddToCart = async (part) => {
     if (!user) {
       alert('Please log in to add items to your cart.');
@@ -67,53 +46,62 @@ export default function ShopPage() {
     }
 
     try {
-      await addToCart(user.uid, part); // Persist the item in Firestore
-      setCart((prevCart) => [...prevCart, part]); // Update local state
-      console.log(`Item added to cart: ${part.name}`);
-    } catch (err) {
-      console.error('Error adding item to cart:', err);
-      alert('Failed to add item to cart.');
+      await addToCart(user.uid, part); // Persist cart data to Firestore
+      setCart((prevCart) => [...prevCart, part]); // Update local cart
+      console.log(`${part.name} added to the cart.`);
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+      alert('Could not add item to cart. Try again.');
     }
   };
 
   return (
     <div style={styles.shopContainer}>
+      {/* Category Navigation */}
+      <nav style={styles.navbar}>
+        {['all', 'engine', 'suspension', 'aero'].map((category) => (
+          <button
+            key={category}
+            style={selectedCategory === category ? styles.activeButton : styles.navButton}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+          </button>
+        ))}
+      </nav>
+
       <h1 style={styles.heading}>Shop Car Parts</h1>
+
+      {/* Parts Display */}
       <div style={styles.partsList}>
-        {parts.map((part) => (
-          <div key={part.id} style={styles.partItem}>
-            <div style={styles.productDetails}>
-              {/* Left side: Name, Price, and Add to Cart */}
+        {filteredParts.length > 0 ? (
+          filteredParts.map((part) => (
+            <div key={part.id} style={styles.partItem}>
+              {/* Product Info */}
               <div style={styles.productInfo}>
-                <h2>{part.name}</h2>
-                <p>{part.description}</p>
-                <p><strong>Price: ${part.price.toFixed(2)}</strong></p>
-                <button 
-                  onClick={() => handleAddToCart(part)} 
+                <h2 style={styles.productName}>{part.name}</h2>
+                <p style={styles.productDescription}>{part.description}</p>
+                <p style={styles.productPrice}>Price: ${part.price.toFixed(2)}</p>
+                <button
+                  onClick={() => handleAddToCart(part)}
                   style={styles.addToCartButton}
                 >
                   Add to Cart
                 </button>
               </div>
 
-              {/* Right side: Image */}
+              {/* Product Image */}
               <div style={styles.productImage}>
                 <img src={part.image} alt={part.name} style={styles.imageStyle} />
               </div>
             </div>
-
-            {/* Lower part: Additional Info */}
-            <div style={styles.productInfoField}>
-              <input 
-                type="text" 
-                placeholder="Enter additional info" 
-                style={styles.inputField}
-              />
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p style={styles.noPartsMessage}>No parts available in this category.</p>
+        )}
       </div>
 
+      {/* Shopping Cart */}
       <div style={styles.cartContainer}>
         <h2>Shopping Cart ({cart.length} items)</h2>
         <ul>
@@ -130,7 +118,30 @@ export default function ShopPage() {
 
 const styles = {
   shopContainer: {
-    padding: '2rem',
+    padding: '2rem 15%',
+  },
+  navbar: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: '10px',
+    marginBottom: '1.5rem',
+  },
+  navButton: {
+    backgroundColor: '#f0f0f0',
+    color: '#000',
+    border: '1px solid #ccc',
+    padding: '10px 15px',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
+  activeButton: {
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: '1px solid #28a745',
+    padding: '10px 15px',
+    borderRadius: '5px',
+    cursor: 'pointer',
   },
   heading: {
     textAlign: 'center',
@@ -138,65 +149,68 @@ const styles = {
     marginBottom: '2rem',
   },
   partsList: {
-    display: 'grid',
-    gridTemplateColumns: '1fr',
-    gap: '1.5rem',
-    marginBottom: '2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2rem',
   },
   partItem: {
-    border: '1px solid #ccc',
-    padding: '1rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-  },
-  productDetails: {
     display: 'flex',
+    gap: '2rem',
+    padding: '2rem',
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   productInfo: {
     flex: '1',
-    paddingRight: '1rem',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
-  productImage: {
-    flex: '1',
-    textAlign: 'center',
+  productName: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
   },
-  imageStyle: {
-    maxWidth: '100%',
-    height: 'auto',
-    borderRadius: '8px',
+  productDescription: {
+    fontSize: '1rem',
+    color: '#555',
+  },
+  productPrice: {
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
   },
   addToCartButton: {
+    padding: '10px 20px',
     backgroundColor: '#28a745',
     color: '#fff',
     border: 'none',
-    padding: '10px 15px',
     borderRadius: '5px',
     cursor: 'pointer',
-    fontSize: '1rem',
-    transition: 'background-color 0.3s',
+    alignSelf: 'flex-start',
+  },
+  productImage: {
+    flex: '0 0 250px',
+    height: '250px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageStyle: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
   },
   cartContainer: {
-    marginTop: '3rem',
-    padding: '1.5rem',
-    backgroundColor: '#f8f8f8',
-    borderRadius: '8px',
+    marginTop: '2rem',
   },
   cartItem: {
-    fontSize: '1rem',
-    padding: '5px 0',
-    borderBottom: '1px solid #ddd',
+    listStyle: 'none',
+    padding: '0.5rem 0',
   },
-  productInfoField: {
-    marginTop: '1rem',
+  noPartsMessage: {
     textAlign: 'center',
-  },
-  inputField: {
-    width: '80%',
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    marginTop: '1rem',
+    fontSize: '1.25rem',
+    color: '#999',
   },
 };

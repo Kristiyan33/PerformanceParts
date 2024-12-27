@@ -1,64 +1,106 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Footer() {
   return (
     <footer style={styles.footer}>
-      <div style={styles.socialLinks}>
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink}>
-          Instagram
-        </a>
-        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink}>
-          Facebook
-        </a>
-        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink}>
-          Twitter
-        </a>
-      </div>
-      <div style={styles.contactLink}>
-        <Link href="/contacts" style={styles.navLink}>
-          Contact Us
+      <div style={styles.leftSection}>
+        <Link href="/" style={styles.brandLink}>
+          PerformanceParts
         </Link>
       </div>
-      <p style={styles.copyText}>© {new Date().getFullYear()} Performance Parts. All rights reserved.</p>
+      <div style={styles.rightSection}>
+        <div style={styles.socialAndContact}>
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={styles.socialLink}
+          >
+            Instagram
+          </a>
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={styles.socialLink}
+          >
+            Facebook
+          </a>
+          <a
+            href="https://twitter.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={styles.socialLink}
+          >
+            Twitter
+          </a>
+          <Link href="/contacts" style={styles.contactLink}>
+            Contact Us
+          </Link>
+        </div>
+        <p style={styles.copyText}>
+          © {new Date().getFullYear()} Performance Parts. All rights reserved.
+        </p>
+      </div>
     </footer>
   );
 }
 
 const styles = {
   footer: {
-    backgroundColor: '#920717',
-    color: '#fff',
-    padding: '1.5rem 2rem',
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '1rem',
+    backgroundColor: "#6482AD",
+    color: "#fff",
+    padding: "3rem 2rem",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Use Roboto font globally
   },
-  socialLinks: {
-    display: 'flex',
-    gap: '1rem',
+  leftSection: {
+    flex: 1,
+    display: "flex",
+    alignItems: "flex-end",
+  },
+  rightSection: {
+    flex: 0.1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "1rem",
+  },
+  brandLink: {
+    color: "#E2DAD6",
+    textDecoration: "none",
+    transition: "color 0.2s",
+    fontSize: "3rem",
+    fontWeight: "bold",
+    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Apply Roboto to the brand link
+  },
+  socialAndContact: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
   },
   socialLink: {
-    color: '#fff',
-    textDecoration: 'none',
-    fontSize: '1rem',
-    transition: 'color 0.2s',
-  },
-  navLink: {
-    color: '#fff',
-    textDecoration: 'none',
-    fontSize: '1rem',
-    transition: 'color 0.2s',
+    color: "#E2DAD6",
+    textDecoration: "none",
+    fontSize: "1.5rem",
+    transition: "color 0.2s",
+    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Apply Roboto to social links
   },
   contactLink: {
-    marginTop: '1rem',
+    color: "#E2DAD6",
+    textDecoration: "none",
+    fontSize: "1.5rem",
+    transition: "color 0.2s",
+    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Apply Roboto to contact link
   },
   copyText: {
-    fontSize: '0.875rem',
-    color: '#ccc',
-    marginTop: '1rem',
+    fontSize: "1rem",
+    color: "#F5EDED",
+    marginTop: "1rem",
+    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Apply Roboto to the copyright text
   },
 };

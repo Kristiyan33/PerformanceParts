@@ -29,8 +29,9 @@ export default function Login() {
 
   return (
     <div style={styles.pageContainer}>
+      <div style={styles.dimmedOverlay}></div> {/* Dimmed overlay */}
       <div style={styles.formContainer}>
-        <h1 style={styles.title}>Login to Your Account</h1>
+        <h1 style={styles.title}>Log in to your account</h1>
         <form onSubmit={handleLogin} style={styles.form}>
           <input
             type="email"
@@ -65,21 +66,36 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh',
-    backgroundColor: '#f4f4f9',
+    backgroundImage: 'url("images/Home page 1.jpg")', // Replace with your image path
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    position: 'relative', // Allows overlay layering
+    overflow: 'hidden',
+  },
+  dimmedOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black for dimming
+    zIndex: 1, // Places overlay below form container
   },
   formContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#7fa1c3', // Dark card style
     padding: '2rem 3rem',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '16px', // Increased for more rounded edges
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
     width: '100%',
     maxWidth: '400px',
     textAlign: 'center',
+    zIndex: 2, // Places form above the overlay
   },
   title: {
     fontSize: '2rem',
     marginBottom: '1.5rem',
-    color: '#333',
+    color: '#e2dad6', // Light text for dark background
+    fontWeight: 'bold',
   },
   form: {
     display: 'flex',
@@ -89,32 +105,36 @@ const styles = {
   input: {
     padding: '1rem',
     fontSize: '1rem',
-    border: '1px solid #ccc',
+    border: '1px solid #555', // Subtle border for inputs
     borderRadius: '4px',
     width: '100%',
     boxSizing: 'border-box',
+    backgroundColor: '#3b3e44', // Match dark theme
+    color: '#fff', // Light text for input
   },
   button: {
     padding: '1rem',
     fontSize: '1.1rem',
-    backgroundColor: '#007bff',
-    color: '#fff',
+    backgroundColor: '#6482ad', // Accent color for buttons
+    color: '#e2dad6',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '6px',
     cursor: 'pointer',
+    fontWeight: 'bold',
     transition: 'background-color 0.3s',
   },
   buttonHover: {
-    backgroundColor: '#0056b3',
+    backgroundColor: '#c0392b', // Darker red on hover
   },
   error: {
-    color: 'red',
+    color: '#e74c3c', // Match the error color with the site's palette
     fontSize: '1rem',
     marginTop: '1rem',
   },
   success: {
-    color: 'green',
+    color: '#2ecc71', // Bright green for success
     fontSize: '1rem',
     marginTop: '1rem',
   },
 };
+
