@@ -1,4 +1,3 @@
-// src/app/page.js
 export default function HomePage() {
   return (
     <div>
@@ -151,4 +150,4 @@ const styles = {
     width: '100%',
     textAlign: 'center', // Ensure the text is horizontally centered
   }
-};
+}; 
