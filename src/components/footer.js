@@ -50,13 +50,13 @@ export default function Footer() {
 
 const styles = {
   footer: {
-    backgroundColor: "#6482AD",
-    color: "#fff",
+    backgroundColor: "#1F2937", // Dark gray background
+    color: "#E5E7EB", // Lighter gray text
     padding: "3rem 2rem",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Use Roboto font globally
+    fontFamily: "Roboto, Arial, Helvetica, sans-serif",
   },
   leftSection: {
     flex: 1,
@@ -71,12 +71,11 @@ const styles = {
     gap: "1rem",
   },
   brandLink: {
-    color: "#E2DAD6",
+    color: "#F9FAFB", // Bright white for branding
     textDecoration: "none",
-    transition: "color 0.2s",
+    transition: "color 0.3s ease",
     fontSize: "3rem",
     fontWeight: "bold",
-    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Apply Roboto to the brand link
   },
   socialAndContact: {
     display: "flex",
@@ -84,23 +83,20 @@ const styles = {
     gap: "1rem",
   },
   socialLink: {
-    color: "#E2DAD6",
+    color: "#9CA3AF", // Muted gray for social links
     textDecoration: "none",
     fontSize: "1.5rem",
-    transition: "color 0.2s",
-    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Apply Roboto to social links
+    transition: "color 0.3s ease",
   },
   contactLink: {
-    color: "#E2DAD6",
+    color: "#9CA3AF", // Consistent muted gray for links
     textDecoration: "none",
     fontSize: "1.5rem",
-    transition: "color 0.2s",
-    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Apply Roboto to contact link
+    transition: "color 0.3s ease",
   },
   copyText: {
     fontSize: "1rem",
-    color: "#F5EDED",
+    color: "#6B7280", // Subtle muted text for copyright
     marginTop: "1rem",
-    fontFamily: "Roboto, Arial, Helvetica, sans-serif", // Apply Roboto to the copyright text
   },
 };

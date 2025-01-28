@@ -1,6 +1,7 @@
 import './globals.css';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
+import { CartProvider } from '../lib/CartContext'; // Import the CartProvider
 
 export const metadata = {
   title: 'Performance Parts',
@@ -11,9 +12,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body style={styles.body}>
-        <Navbar />
-        <main style={styles.main}>{children}</main>
-        <Footer/>
+        <CartProvider> {/* Wrap the application with CartProvider */}
+          <Navbar />
+          <main style={styles.main}>{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
@@ -32,4 +35,5 @@ const styles = {
     padding: '0',
   },
 };
+
 

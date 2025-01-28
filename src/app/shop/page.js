@@ -2,18 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../lib/firebase'; // Ensure this path is correct
+import { db } from '../../lib/firebase';
+import { useCart } from '../../lib/CartContext'; // Import the CartContext hook
 
 export default function ShopPage() {
-  const [products, setProducts] = useState([]); // Products from Firestore
-  const [loading, setLoading] = useState(true); // Loading state
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     category: '',
     priceRange: '',
   });
-  const [hovered, setHovered] = useState(null); // Hover state for cards
-  const [hoveredImage, setHoveredImage] = useState(null); // Hover state for images
-  const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for modal
+  const [hovered, setHovered] = useState(null);
+  const { cart, addToCart } = useCart(); // Use CartContext
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,17 +26,46 @@ export default function ShopPage() {
         ...doc.data(),
       }));
       setProducts(productsData);
+      setFilteredProducts(productsData); // Initially, all products are displayed
       setLoading(false);
     };
 
     fetchProducts();
   }, []);
 
+  // Update filters state
   const handleFilterChange = (key, value) => {
     setFilters((prevFilters) => ({ ...prevFilters, [key]: value }));
   };
 
-  const closeModal = () => setSelectedProduct(null);
+  // Filter products whenever filters or products change
+  useEffect(() => {
+    const applyFilters = () => {
+      let filtered = products;
+
+      // Filter by category
+      if (filters.category) {
+        filtered = filtered.filter(
+          (product) => product.category === filters.category
+        );
+      }
+
+      // Filter by price range
+      if (filters.priceRange) {
+        const [minPrice, maxPrice] = filters.priceRange.split('-').map(Number);
+        filtered = filtered.filter(
+          (product) =>
+            product.price >= minPrice && product.price <= maxPrice
+        );
+      }
+
+      setFilteredProducts(filtered);
+    };
+
+    applyFilters();
+  }, [filters, products]);
+
+  const closeModal = () => setHovered(null);
 
   if (loading) {
     return <Spinner />;
@@ -52,92 +82,71 @@ export default function ShopPage() {
           value={filters.category}
           onChange={(e) => handleFilterChange('category', e.target.value)}
         >
-          <option value="">Category</option>
-          <option value="brakes">Brakes</option>
+          <option value="">All categories</option>
           <option value="suspension">Suspension</option>
-          <option value="exhaust">Exhaust</option>
+          <option value="engine">Engine</option>
+          <option value="aerodynamics">Aerodynamics</option>
         </select>
         <select
           style={styles.filterDropdown}
           value={filters.priceRange}
           onChange={(e) => handleFilterChange('priceRange', e.target.value)}
         >
-          <option value="">Price Range</option>
-          <option value="0-500">$0 - $500</option>
-          <option value="500-1500">$500 - $1500</option>
-          <option value="1500-5000">$1500 - $5000</option>
+          <option value="">All price ranges</option>
+          <option value="0-499">$0 - $499</option>
+          <option value="500-1999">$500 - $1999</option>
+          <option value="1500-4999">$2000 - $4999</option>
+          <option value="4999-9999">$4999 - $9999</option>
         </select>
-        <button style={styles.clearFiltersButton} onClick={() => setFilters({})}>
+        <button
+          style={styles.clearFiltersButton}
+          onClick={() => setFilters({ category: '', priceRange: '' })}
+        >
           Clear Filters
         </button>
       </div>
 
       {/* Product Grid */}
       <div style={styles.productGrid}>
-        {products.map((product) => (
-          <div
-            key={product.id}
-            onMouseEnter={() => setHovered(product.id)}
-            onMouseLeave={() => setHovered(null)}
-            onClick={() => setSelectedProduct(product)} // Open modal on click
-            style={{
-              ...styles.productCard,
-              ...(hovered === product.id ? styles.productCardHover : {}),
-            }}
-          >
-            <img
-              src={product.image}
-              alt={product.name}
-              onMouseEnter={() => setHoveredImage(product.id)}
-              onMouseLeave={() => setHoveredImage(null)}
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              onMouseEnter={() => setHovered(product.id)}
+              onMouseLeave={() => setHovered(null)}
               style={{
-                ...styles.productImage,
-                ...(hoveredImage === product.id ? styles.productImageHover : {}),
+                ...styles.productCard,
+                ...(hovered === product.id ? styles.productCardHover : {}),
               }}
-            />
-            <h2 style={styles.productName}>{product.name}</h2>
-            <p style={styles.productDescription}>{product.description}</p>
-            <p style={styles.productPrice}>
-              ${product.price ? Number(product.price).toFixed(2) : 'N/A'}
-            </p>
-            <button
-              style={styles.addToCartButton}
-              onMouseEnter={(e) => (e.target.style.background = 'linear-gradient(45deg, #0056b3, #003f7f)')}
-              onMouseLeave={(e) => (e.target.style.background = 'linear-gradient(45deg, #007bff, #0056b3)')}
             >
-              Add to Cart
-            </button>
+              <img
+                src={product.image}
+                alt={product.name}
+                style={styles.productImage}
+              />
+              <h2 style={styles.productName}>{product.name}</h2>
+              <p style={styles.productDescription}>{product.description}</p>
+              <p style={styles.productPrice}>
+                ${product.price ? Number(product.price).toFixed(2) : 'N/A'}
+              </p>
+              <button
+                style={styles.addToCartButton}
+                onClick={() => addToCart(product)}
+              >
+                Add to Cart
+              </button>
+            </div>
+          ))
+        ) : (
+          <div style={styles.noProductsMessage}>
+            No products match your filters.
           </div>
-        ))}
+        )}
       </div>
-
-      {/* Modal */}
-      {selectedProduct && (
-        <div style={styles.modalOverlay} onClick={closeModal}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <button style={styles.modalCloseButton} onClick={closeModal}>
-              &times;
-            </button>
-            <img
-              src={selectedProduct.image}
-              alt={selectedProduct.name}
-              style={styles.modalImage}
-            />
-            <h2 style={styles.modalTitle}>{selectedProduct.name}</h2>
-            <p style={styles.modalDescription}>{selectedProduct.description}</p>
-            <p style={styles.modalPrice}>
-              ${selectedProduct.price ? Number(selectedProduct.price).toFixed(2) : 'N/A'}
-            </p>
-            <button style={styles.modalAddToCartButton}>Add to Cart</button>
-            <button style={styles.modalBuyNowButton}>Buy Now</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-// Spinner Component
 function Spinner() {
   return (
     <div style={styles.spinner}>
@@ -151,94 +160,108 @@ function Spinner() {
 const styles = {
   pageContainer: {
     padding: '2rem',
-    backgroundColor: '#f4f4f9',
-    fontFamily: 'Montserrat, sans-serif',
+    backgroundColor: '#121212', // Dark black background
+    fontFamily: 'Poppins, sans-serif',
+    color: '#e0e0e0', // Light gray text for readability
   },
   title: {
-    fontSize: '2.5rem',
+    fontSize: '3rem',
     textAlign: 'center',
-    color: '#333',
+    color: '#ffffff', // White for the title
     marginBottom: '2rem',
+    fontWeight: 'bold',
   },
   filtersContainer: {
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'space-around', // Space items evenly
     alignItems: 'center',
+    flexWrap: 'wrap', // Allow wrapping for smaller screens
     gap: '1rem',
-    backgroundColor: '#fff',
-    padding: '1rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#1f1f1f', // Slightly darker gray background
+    padding: '1.5rem',
+    borderRadius: '15px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)', // Subtle shadow for depth
     marginBottom: '2rem',
+    border: '1px solid #2e2e2e', // Add border for better separation
   },
   filterDropdown: {
-    padding: '0.5rem',
-    fontSize: '1rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
+    padding: '0.8rem 1rem',
+    fontSize: '1.1rem',
+    border: '1px solid #3c3c3c',
+    borderRadius: '12px',
+    backgroundColor: '#292929', // Medium-dark gray for dropdowns
+    color: '#e0e0e0', // Light text color for contrast
+    transition: 'border-color 0.3s, background-color 0.3s',
+    outline: 'none',
+    cursor: 'pointer',
   },
   clearFiltersButton: {
-    padding: '0.5rem 1rem',
+    padding: '0.8rem 1.2rem',
     fontSize: '1rem',
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
+    fontWeight: 'bold',
+    backgroundColor: 'transparent',
+    color: '#e74c3c', // Red for a standout action
+    border: '2px solid #e74c3c',
+    borderRadius: '12px',
     cursor: 'pointer',
+    transition: 'background-color 0.3s, color 0.3s, transform 0.3s',
   },
   productGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '1.5rem',
+    gridTemplateColumns: 'repeat(4, 1fr)', // 4 products per row
+    gap: '3rem',
+    justifyContent: 'center',
+  },
+
+  // Responsive Design for smaller screens
+  '@media (max-width: 1200px)': {
+    productGrid: {
+      gridTemplateColumns: 'repeat(3, 1fr)', // 3 products per row on medium screens
+    },
+  },
+  '@media (max-width: 900px)': {
+    productGrid: {
+      gridTemplateColumns: 'repeat(2, 1fr)', // 2 products per row on smaller screens
+    },
+  },
+  '@media (max-width: 600px)': {
+    productGrid: {
+      gridTemplateColumns: 'repeat(1, 1fr)', // 1 product per row on mobile
+    },
   },
   productCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#1e1e1e', // Dark gray background for cards
     padding: '1.5rem',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '10px',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.5)',
     textAlign: 'center',
     transition: 'transform 0.3s, box-shadow 0.3s',
     cursor: 'pointer',
   },
   productCardHover: {
     transform: 'scale(1.05)',
-    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.8)',
   },
   productImage: {
     width: '100%',
     height: '200px',
     objectFit: 'cover',
-    borderRadius: '8px',
+    borderRadius: '10px',
     marginBottom: '1rem',
     transition: 'transform 0.3s',
   },
-  productImageHover: {
-    transform: 'scale(1.1)',
-  },
-  productName: {
-    fontSize: '1.5rem',
-    color: '#333',
-    marginBottom: '0.5rem',
-  },
-  productDescription: {
-    fontSize: '1rem',
-    color: '#666',
-    marginBottom: '1rem',
-  },
-  productPrice: {
-    fontSize: '1.2rem',
-    color: '#444',
-    marginBottom: '1rem',
-  },
-  addToCartButton: {
-    padding: '0.8rem 1.5rem',
-    fontSize: '1rem',
-    background: 'linear-gradient(45deg, #007bff, #0056b3)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    transition: 'background 0.3s, transform 0.3s',
+  noProductsMessage: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    height: '50vh', // Adjust height to center it vertically
+    fontSize: '2rem',
+    fontWeight: 'bold',
+    color: '#ffffff', // White text
+    backgroundColor: '#121212', // Black background
+    borderRadius: '10px', // Optional: Rounded corners
+    margin: '2rem auto', // Center within the parent
   },
   spinner: {
     width: '40px',
@@ -250,7 +273,7 @@ const styles = {
     width: '100%',
     height: '100%',
     borderRadius: '50%',
-    backgroundColor: '#007bff',
+    backgroundColor: '#3498db',
     opacity: 0.6,
     position: 'absolute',
     animation: 'sk-bounce 2s infinite ease-in-out',
@@ -259,81 +282,10 @@ const styles = {
     width: '100%',
     height: '100%',
     borderRadius: '50%',
-    backgroundColor: '#0056b3',
+    backgroundColor: '#2980b9',
     opacity: 0.6,
     position: 'absolute',
     animation: 'sk-bounce 2s infinite ease-in-out',
     animationDelay: '-1s',
   },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    width: '80%',
-    maxWidth: '500px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-    position: 'relative',
-  },
-  modalCloseButton: {
-    position: 'absolute',
-    top: '1rem',
-    right: '1rem',
-    fontSize: '1.5rem',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    color: '#333',
-  },
-  modalImage: {
-    width: '100%',
-    height: '300px',
-    objectFit: 'cover',
-    borderRadius: '8px',
-    marginBottom: '1rem',
-  },
-  modalTitle: {
-    fontSize: '1.8rem',
-    marginBottom: '1rem',
-  },
-  modalDescription: {
-    fontSize: '1.2rem',
-    color: '#666',
-    marginBottom: '1rem',
-  },
-  modalPrice: {
-    fontSize: '1.4rem',
-    marginBottom: '1rem',
-  },
-  modalAddToCartButton: {
-    padding: '1rem 2rem',
-    fontSize: '1.1rem',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    marginRight: '1rem',
-  },
-  modalBuyNowButton: {
-    padding: '1rem 2rem',
-    fontSize: '1.1rem',
-    backgroundColor: '#28a745',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
 };
-
