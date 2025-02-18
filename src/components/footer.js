@@ -37,7 +37,7 @@ export default function Footer() {
             Twitter
           </a>
           <Link href="/contacts" style={styles.contactLink}>
-            Contact Us
+            Контакти
           </Link>
         </div>
         <p style={styles.copyText}>

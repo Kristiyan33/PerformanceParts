@@ -1,7 +1,31 @@
+// Add this at the very top of your file to mark it as a client component
+'use client';
+
+import { useState, useEffect } from "react";
 import AddProduct from "../../components/addProduct";
 import ProductList from "../../components/productList";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../lib/firebase";
 
 const AdminPage = () => {
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser || !currentUser.email.includes("admin@")) {
+        router.push("/login"); // Redirect to login if not logged in or not an admin
+      } else {
+        setUser(currentUser);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
+  if (!user) return <div>Loading...</div>; // Loading state before user is set
+
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Admin Panel</h1>

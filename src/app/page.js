@@ -18,7 +18,7 @@ export default function HomePage() {
       <section style={styles.catalogueSection}>
         <h2 style={styles.catalogueTitle}>Нашият каталог</h2>
         <div style={styles.buttonContainer}>
-          <button style={styles.catalogueButton}>
+          <button style={styles.catalogueButton} onClick={() => window.location.href = '/shop'}>
             <div style={styles.textWrapper}>Посети каталога!</div>
           </button>
         </div>
@@ -38,7 +38,7 @@ const styles = {
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    backgroundImage: 'url("/images/homePage.jpg")',
+    backgroundImage: 'url("/images/home page background.jpg")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     color: '#fff',
@@ -104,14 +104,14 @@ const styles = {
   },
 
   catalogueButton: {
-    background: 'url("/images/engine.jpg") center/cover no-repeat',
+    background: 'url("/images/catalogue button background.jpg") center/cover no-repeat',
     color: '#e2dad6',
     fontSize: '1.5rem',
     padding: '2rem',
-    border: '2px solid #3C5173',
-    borderRadius: '10px',
+    border: '4px solid #3C5173',
+    borderRadius: '30px',
     cursor: 'pointer',
-    width: '30%',
+    width: '90%',
     height: '500px',
     position: 'relative',
     display: 'flex',

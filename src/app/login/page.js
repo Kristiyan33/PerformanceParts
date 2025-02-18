@@ -1,25 +1,25 @@
-'use client'; // This is necessary to use React hooks
+'use client'; // Необходимо за използване на React hooks
 
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../lib/firebase'; // Import your Firebase auth object
-import { useRouter } from 'next/navigation'; // To handle redirection after login
+import { auth } from '../../lib/firebase'; // Импортирайте Firebase auth обекта
+import { useRouter } from 'next/navigation'; // За пренасочване след вход
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const router = useRouter(); // Hook to redirect user after successful login
+  const router = useRouter(); // Hook за пренасочване след успешен вход
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('User logged in:', userCredential.user);
+      console.log('Потребител влезе:', userCredential.user);
       setSuccess(true);
-      // Redirect to homepage after successful login
+      // Пренасочване към началната страница след успешен вход
       router.push('/');
     } catch (err) {
       setError(err.message);
@@ -29,13 +29,13 @@ export default function Login() {
 
   return (
     <div style={styles.pageContainer}>
-      <div style={styles.dimmedOverlay}></div> {/* Dimmed overlay */}
+      <div style={styles.dimmedOverlay}></div> {/* Затъмнен слой */}
       <div style={styles.formContainer}>
-        <h1 style={styles.title}>Log in to your account</h1>
+        <h1 style={styles.title}>Вход в Профила</h1>
         <form onSubmit={handleLogin} style={styles.form}>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Имейл"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -43,18 +43,18 @@ export default function Login() {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Парола"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             style={styles.input}
           />
           <button type="submit" style={styles.button}>
-            Login
+            Вход
           </button>
         </form>
         {error && <p style={styles.error}>{error}</p>}
-        {success && <p style={styles.success}>Login successful!</p>}
+        {success && <p style={styles.success}>Успешен вход!</p>}
       </div>
     </div>
   );
@@ -66,10 +66,10 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh',
-    backgroundImage: 'url("images/Home page 1.jpg")', // Replace with your image path
+    backgroundImage: 'url("images/login & register background.jpg")', // Път до фоновото изображение
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    position: 'relative', // Allows overlay layering
+    position: 'relative', // Позволява наслояване
     overflow: 'hidden',
   },
   dimmedOverlay: {
@@ -78,23 +78,24 @@ const styles = {
     left: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black for dimming
-    zIndex: 1, // Places overlay below form container
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Полупрозрачно черно за затъмняване
+    zIndex: 1, // Поставя слоя под формата
   },
   formContainer: {
-    backgroundColor: '#7fa1c3', // Dark card style
     padding: '2rem 3rem',
-    borderRadius: '16px', // Increased for more rounded edges
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    borderRadius: '16px',
     width: '100%',
     maxWidth: '400px',
     textAlign: 'center',
-    zIndex: 2, // Places form above the overlay
+    zIndex: 2, // Поставя формата над затъмнения слой
+    backdropFilter: 'blur(10px)', // Добавя замъгляване
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Леко прозрачен ефект
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Леко засенчване за стил
   },
   title: {
     fontSize: '2rem',
     marginBottom: '1.5rem',
-    color: '#e2dad6', // Light text for dark background
+    color: '#e2dad6', // Светъл текст за контраст
     fontWeight: 'bold',
   },
   form: {
@@ -105,17 +106,17 @@ const styles = {
   input: {
     padding: '1rem',
     fontSize: '1rem',
-    border: '1px solid #555', // Subtle border for inputs
+    border: '1px solid #555',
     borderRadius: '4px',
     width: '100%',
     boxSizing: 'border-box',
-    backgroundColor: '#3b3e44', // Match dark theme
-    color: '#fff', // Light text for input
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Полупрозрачен тъмен фон
+    color: '#fff',
   },
   button: {
     padding: '1rem',
     fontSize: '1.1rem',
-    backgroundColor: '#6482ad', // Accent color for buttons
+    backgroundColor: '#6482ad',
     color: '#e2dad6',
     border: 'none',
     borderRadius: '6px',
@@ -123,16 +124,13 @@ const styles = {
     fontWeight: 'bold',
     transition: 'background-color 0.3s',
   },
-  buttonHover: {
-    backgroundColor: '#c0392b', // Darker red on hover
-  },
   error: {
-    color: '#e74c3c', // Match the error color with the site's palette
+    color: '#e74c3c',
     fontSize: '1rem',
     marginTop: '1rem',
   },
   success: {
-    color: '#2ecc71', // Bright green for success
+    color: '#2ecc71',
     fontSize: '1rem',
     marginTop: '1rem',
   },

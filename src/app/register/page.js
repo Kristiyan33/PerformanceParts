@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../lib/firebase'; // Correct the import path
+import { auth } from '../../lib/firebase'; // Коригирайте пътя за Firebase
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -13,8 +13,8 @@ export default function Register() {
     e.preventDefault();
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log('User registered:', userCredential.user);
-      alert('Registration successful!');
+      console.log('Регистриран потребител:', userCredential.user);
+      alert('Регистрацията е успешна!');
     } catch (err) {
       console.error(err.message);
       setError(err.message);
@@ -23,13 +23,13 @@ export default function Register() {
 
   return (
     <div style={styles.pageContainer}>
-      <div style={styles.dimmedOverlay}></div> {/* Dimmed overlay */}
+      <div style={styles.dimmedOverlay}></div> {/* Затъмнен слой */}
       <div style={styles.formContainer}>
-        <h1 style={styles.title}>Create an Account</h1>
+        <h1 style={styles.title}>Създаване на акаунт</h1>
         <form onSubmit={handleRegister} style={styles.form}>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Имейл"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -37,14 +37,14 @@ export default function Register() {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Парола"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             style={styles.input}
           />
           <button type="submit" style={styles.button}>
-            Register
+            Регистрация
           </button>
         </form>
         {error && <p style={styles.errorText}>{error}</p>}
@@ -59,10 +59,10 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh',
-    backgroundImage: 'url("images/Home page 1.jpg")', // Replace with your image path
+    backgroundImage: 'url("images/login & register background.jpg")', // Заменете с вашия път на изображението
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    position: 'relative', // Allows overlay layering
+    position: 'relative', // Позволява наслояване
     overflow: 'hidden',
   },
   dimmedOverlay: {
@@ -71,23 +71,24 @@ const styles = {
     left: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black for dimming
-    zIndex: 1, // Places overlay below form container
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Полупрозрачно черно за затъмняване
+    zIndex: 1, // Поставя слоя под формата
   },
   formContainer: {
-    backgroundColor: '#7fa1c3', // Card color
     padding: '2rem 3rem',
-    borderRadius: '16px', // Rounded edges
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    borderRadius: '16px',
     width: '100%',
     maxWidth: '400px',
     textAlign: 'center',
-    zIndex: 2, // Places form above the overlay
+    zIndex: 2, // Поставя формата над затъмнения слой
+    backdropFilter: 'blur(10px)', // Добавя замъгляване
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Леко прозрачен ефект
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Леко засенчване за стил
   },
   title: {
     fontSize: '2rem',
     marginBottom: '1.5rem',
-    color: '#e2dad6', // Light text for contrast
+    color: '#e2dad6', // Светъл текст за контраст
     fontWeight: 'bold',
   },
   form: {
@@ -98,17 +99,17 @@ const styles = {
   input: {
     padding: '1rem',
     fontSize: '1rem',
-    border: '1px solid #555', // Subtle border
+    border: '1px solid #555',
     borderRadius: '4px',
     width: '100%',
     boxSizing: 'border-box',
-    backgroundColor: '#3b3e44', // Match dark theme
-    color: '#fff', // Light text for input
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Полупрозрачен тъмен фон
+    color: '#fff',
   },
   button: {
     padding: '1rem',
     fontSize: '1.1rem',
-    backgroundColor: '#6482ad', // Accent color for buttons
+    backgroundColor: '#6482ad',
     color: '#e2dad6',
     border: 'none',
     borderRadius: '6px',
@@ -117,7 +118,7 @@ const styles = {
     transition: 'background-color 0.3s',
   },
   errorText: {
-    color: '#e74c3c', // Match the error color with the site's palette
+    color: '#e74c3c',
     fontSize: '1rem',
     marginTop: '1rem',
   },
