@@ -1,9 +1,13 @@
+"use client";
+
+import Link from "next/link";
+
 export default function CancelPage() {
   return (
     <div style={styles.container}>
       <h1>Payment Canceled</h1>
       <p>Your payment was not completed. You can try again.</p>
-      <a href="/" style={styles.link}>Go back to Home</a>
+      <Link href="/">Go back home</Link>
     </div>
   );
 }
