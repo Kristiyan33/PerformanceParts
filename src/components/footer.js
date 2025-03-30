@@ -1,8 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Footer() {
+  const [hoveredLink, setHoveredLink] = useState(null);
+
+  const handleHover = (link) => setHoveredLink(link);
+  const handleHoverOut = () => setHoveredLink(null);
+
   return (
     <footer style={styles.footer}>
       <div style={styles.leftSection}>
@@ -16,7 +22,13 @@ export default function Footer() {
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            style={styles.socialLink}
+            style={
+              hoveredLink === "instagram"
+                ? { ...styles.socialLink, ...styles.hoveredLink }
+                : styles.socialLink
+            }
+            onMouseEnter={() => handleHover("instagram")}
+            onMouseLeave={handleHoverOut}
           >
             Instagram
           </a>
@@ -24,7 +36,13 @@ export default function Footer() {
             href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
-            style={styles.socialLink}
+            style={
+              hoveredLink === "facebook"
+                ? { ...styles.socialLink, ...styles.hoveredLink }
+                : styles.socialLink
+            }
+            onMouseEnter={() => handleHover("facebook")}
+            onMouseLeave={handleHoverOut}
           >
             Facebook
           </a>
@@ -32,11 +50,26 @@ export default function Footer() {
             href="https://twitter.com"
             target="_blank"
             rel="noopener noreferrer"
-            style={styles.socialLink}
+            style={
+              hoveredLink === "twitter"
+                ? { ...styles.socialLink, ...styles.hoveredLink }
+                : styles.socialLink
+            }
+            onMouseEnter={() => handleHover("twitter")}
+            onMouseLeave={handleHoverOut}
           >
             Twitter
           </a>
-          <Link href="/contacts" style={styles.contactLink}>
+          <Link
+            href="/contacts"
+            style={
+              hoveredLink === "contacts"
+                ? { ...styles.contactLink, ...styles.hoveredLink }
+                : styles.contactLink
+            }
+            onMouseEnter={() => handleHover("contacts")}
+            onMouseLeave={handleHoverOut}
+          >
             Контакти
           </Link>
         </div>
@@ -86,17 +119,27 @@ const styles = {
     color: "#9CA3AF", // Muted gray for social links
     textDecoration: "none",
     fontSize: "1.5rem",
-    transition: "color 0.3s ease",
+    transition: "color 0.3s ease, transform 0.3s ease, padding 0.4s ease", // Added padding transition
+    padding: "10px 20px", // Default padding
   },
   contactLink: {
     color: "#9CA3AF", // Consistent muted gray for links
     textDecoration: "none",
     fontSize: "1.5rem",
-    transition: "color 0.3s ease",
+    transition: "color 0.3s ease, transform 0.3s ease, padding 0.4s ease", // Added padding transition
+    padding: "10px 20px", // Default padding
   },
   copyText: {
     fontSize: "1rem",
     color: "#6B7280", // Subtle muted text for copyright
     marginTop: "1rem",
+  },
+  hoveredLink: {
+    color: "#80CBC4", // Brighter color when hovered
+    backgroundColor: "#50688C", // Background color when hovered
+    padding: "12px 24px", // Increased padding for hover
+    borderRadius: "5px",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+    transform: "scale(1.02)", // Subtle scaling for smoother effect
   },
 };

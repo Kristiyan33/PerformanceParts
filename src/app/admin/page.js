@@ -1,40 +1,48 @@
-// Add this at the very top of your file to mark it as a client component
 'use client';
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import AddProduct from "../../components/addProduct";
 import ProductList from "../../components/productList";
-import { useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../lib/firebase";
 
 const AdminPage = () => {
-  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser || !currentUser.email.includes("admin@")) {
-        router.push("/login"); // Redirect to login if not logged in or not an admin
-      } else {
-        setUser(currentUser);
-      }
-    });
+    const adminStatus = JSON.parse(localStorage.getItem("isAdmin"));
+    if (!adminStatus) {
+      setIsAdmin(false);
+    } else {
+      setIsAdmin(true);
+    }
+  }, []);
 
-    return () => unsubscribe();
-  }, [router]);
+  if (isAdmin === null) return <div>Loading...</div>;
 
-  if (!user) return <div>Loading...</div>; // Loading state before user is set
+  if (!isAdmin) {
+    return (
+      <div style={styles.overlay}>
+        <div style={styles.modal}>
+          <h2 style={styles.modalTitle}>Нямате достъп до тази страница</h2>
+          <p style={styles.modalText}>Само администратори могат да влизат тук.</p>
+          <button style={styles.button} onClick={() => router.push("/")}>
+            Назад
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={styles.container}>
+    <div style={styles.wrapper}>
       <h1 style={styles.title}>Admin Panel</h1>
       <div style={styles.section}>
-        <h2 style={styles.sectionTitle}>Add New Product</h2>
+        <h2 style={styles.sectionTitle}>Добавяне на нов продукт</h2>
         <AddProduct />
       </div>
       <div style={styles.section}>
-        <h2 style={styles.sectionTitle}>Manage Products</h2>
+        <h2 style={styles.sectionTitle}>Управление на продукти</h2>
         <ProductList />
       </div>
     </div>
@@ -42,37 +50,95 @@ const AdminPage = () => {
 };
 
 const styles = {
-  container: {
-    maxWidth: "900px",
-    margin: "2rem auto",
-    padding: "1.5rem",
-    backgroundColor: "#f8f9fa",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    fontFamily: "'Montserrat', sans-serif",
+  wrapper: {
+    backgroundColor: '#2c2c2c',  // Dark background for the whole page
+    color: '#fff',
+    fontFamily: 'Roboto, sans-serif',
+    minHeight: '100vh',
+    padding: '2rem',
+  },
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backdropFilter: "blur(8px)",
+  },
+  modal: {
+    backgroundColor: "#2c2c2c",  // Dark background for modal
+    padding: "2rem",
+    borderRadius: "10px",
+    textAlign: "center",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+  },
+  modalTitle: {
+    fontSize: "1.8rem",
+    fontWeight: "bold",
+    marginBottom: "1rem",
+    color: "#f5eded", // Light color for text
+  },
+  modalText: {
+    fontSize: "1.2rem",
+    marginBottom: "1.5rem",
+    color: "#bbb",  // Lighter color for modal text
+  },
+  button: {
+    padding: "0.8rem 1.5rem",
+    fontSize: "1rem",
+    color: "#fff",
+    backgroundColor: "#3C5173",  // Matching button color
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
   },
   title: {
     fontSize: "2.5rem",
     fontWeight: "700",
-    color: "#333",
+    color: "#3C5173",  // Title color matching the main page
     textAlign: "center",
     marginBottom: "2rem",
   },
   section: {
     marginBottom: "3rem",
-    padding: "1rem",
-    backgroundColor: "#fff",
+    padding: "1.5rem",
+    backgroundColor: "#3C5173",  // Lighter background for sections
     borderRadius: "8px",
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   },
   sectionTitle: {
-    fontSize: "1.8rem",
+    fontSize: "2rem",
     fontWeight: "600",
-    color: "#007bff",
-    borderBottom: "2px solid #007bff",
-    paddingBottom: "0.5rem",
+    color: "#fff",
     marginBottom: "1.5rem",
+    borderBottom: "2px solid #fff",  // White border for section title
+    paddingBottom: "0.5rem",
+  },
+  input: {
+    padding: '0.8rem',
+    fontSize: '1rem',
+    border: 'none',
+    borderRadius: '4px',
+    backgroundColor: '#1F2937',
+    color: '#fff',
+    marginBottom: '1rem',
+  },
+  textarea: {
+    padding: '0.8rem',
+    fontSize: '1rem',
+    border: 'none',
+    borderRadius: '4px',
+    height: '6rem',
+    backgroundColor: '#1F2937',
+    color: '#fff',
+    marginBottom: '1rem',
   },
 };
+
 
 export default AdminPage;

@@ -12,9 +12,32 @@ export default function CartPage() {
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   // Handle checkout
-  const handleCheckout = () => {
-    router.push('/checkout'); // Navigate to the checkout page
+  const handleCheckout = async () => {
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+  
+    try {
+      const response = await fetch("/api/checkout_sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cartItems: cart }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.sessionUrl) {
+        window.location.href = data.sessionUrl; // Redirect user to Stripe Checkout
+      } else {
+        alert("Error: Unable to proceed to checkout");
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Something went wrong while proceeding to checkout");
+    }
   };
+  
 
   return (
     <div style={styles.pageContainer}>

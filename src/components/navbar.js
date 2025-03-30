@@ -5,18 +5,33 @@ import Link from 'next/link';
 import { auth } from '../lib/firebase'; // Import Firebase auth object
 import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import Firebase functions for auth
 import { useCart } from '../lib/CartContext'; // Import the CartContext
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(null);
-
   const { cart } = useCart();
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const router = useRouter();
+  
+  // State for checking if the user is admin
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user ? user : null);
+      if (user) {
+        setUser(user);
+        // Check if the user is admin by their email
+        if (user.email && user.email.includes('admin@')) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      } else {
+        setUser(null);
+        setIsAdmin(false);
+      }
     });
 
     return () => unsubscribe();
@@ -72,12 +87,23 @@ export default function Navbar() {
 
         {user ? (
           <div style={styles.iconsContainer}>
-            <div style={styles.cartButton}>
-              <Link href="/cart" style={styles.cartLink}>
-                <img src="/images/cart icon.png" alt="Cart" style={styles.cartIcon} />
-                {cartItemCount > 0 && <span style={styles.cartBadge}>{cartItemCount}</span>}
-              </Link>
-            </div>
+            {isAdmin ? (
+              <button
+                onClick={() => router.push('/admin')} // Redirect to admin page
+                style={hoveredLink === 'admin' ? { ...styles.navLink, ...styles.hoveredLink } : styles.navLink}
+                onMouseEnter={() => handleHover('admin')}
+          onMouseLeave={() => setHoveredLink(null)}
+              >
+                Админ панел
+              </button>
+            ) : (
+              <div style={styles.cartButton}>
+                <Link href="/cart" style={styles.cartLink}>
+                  <img src="/images/cart icon.png" alt="Cart" style={styles.cartIcon} />
+                  {cartItemCount > 0 && <span style={styles.cartBadge}>{cartItemCount}</span>}
+                </Link>
+              </div>
+            )}
 
             <div
               style={styles.profileButton}
@@ -175,7 +201,7 @@ const styles = {
     borderRadius: '5px',
   },
   hoveredLink: {
-    color: '#FFFFFF',
+    color: '#80CBC4',
     backgroundColor: '#50688C',
     padding: '12px 22px',
     borderRadius: '8px',
@@ -200,7 +226,7 @@ const styles = {
     position: 'absolute',
     top: '-10px',
     right: '-10px',
-    backgroundColor: "#1F2937",
+    backgroundColor: '#1F2937',
     color: '#FFF',
     fontSize: '1rem',
     fontWeight: 'bold',
@@ -238,5 +264,14 @@ const styles = {
     transition: 'background-color 0.3s ease',
     borderBottom: '1px solid #3C5173',
   },
+  adminButton: {
+    color: '#E2DAD6',
+    textDecoration: 'none',
+    fontSize: '1.6rem',
+    transition: 'color 0.3s ease, background-color 0.3s ease',
+    cursor: 'pointer',
+    padding: '10px 20px',
+    borderRadius: '5px',
+    backgroundColor: 'transparent',
+  },
 };
-

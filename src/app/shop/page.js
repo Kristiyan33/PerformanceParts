@@ -20,6 +20,9 @@ export default function ShopPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
 
+  // State for controlling the visibility of the filter sidebar
+  const [collapsed, setCollapsed] = useState(true);
+
   useEffect(() => {
     // Check if user is logged in
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -82,36 +85,91 @@ export default function ShopPage() {
       <h1 style={styles.title}>Shop High-Performance Parts</h1>
 
       <div style={styles.mainContent}>
-        <div style={styles.sidebar}>
+        {/* Sidebar Toggle Button */}
+        <div
+          style={{
+            ...styles.toggleButtonContainer,
+            width: collapsed ? '50px' : '300px', // Width expands with filter section
+          }}
+        >
+          <button
+            style={styles.toggleButton}
+            onClick={() => setCollapsed((prevState) => !prevState)}
+          >
+            {collapsed ? '>' : '<'}
+          </button>
+        </div>
+
+        {/* Filter Section */}
+        <div
+          style={{
+            ...styles.sidebar,
+            width: collapsed ? '0' : '300px', // Sidebar expands with the button
+            padding: collapsed ? '0' : '1.5rem',
+            visibility: collapsed ? 'hidden' : 'visible',
+            opacity: collapsed ? '0' : '1',
+            transition: 'width 0.3s ease, opacity 0.3s ease, visibility 0.3s ease',
+          }}
+        >
           <div style={styles.filtersContainer}>
-            <select style={styles.filterDropdown} value={filters.category} onChange={(e) => handleFilterChange('category', e.target.value)}>
+            <select
+              style={styles.filterDropdown}
+              value={filters.category}
+              onChange={(e) => handleFilterChange('category', e.target.value)}
+            >
               <option value="">All categories</option>
               <option value="suspension">Suspension</option>
               <option value="engine">Engine</option>
               <option value="aerodynamics">Aerodynamics</option>
             </select>
-            <select style={styles.filterDropdown} value={filters.priceRange} onChange={(e) => handleFilterChange('priceRange', e.target.value)}>
+            <select
+              style={styles.filterDropdown}
+              value={filters.priceRange}
+              onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+            >
               <option value="">All price ranges</option>
               <option value="0-499">$0 - $499</option>
               <option value="500-1999">$500 - $1999</option>
               <option value="2000-4999">$2000 - $4999</option>
               <option value="4999-9999">$4999 - $9999</option>
             </select>
-            <button style={styles.clearFiltersButton} onClick={() => setFilters({ category: '', priceRange: '' })}>Clear Filters</button>
+            <button
+              style={styles.clearFiltersButton}
+              onClick={() => setFilters({ category: '', priceRange: '' })}
+            >
+              Clear Filters
+            </button>
           </div>
         </div>
 
+        {/* Products Grid */}
         <div style={styles.productGrid}>
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <div key={product.id} onMouseEnter={() => setHovered(product.id)} onMouseLeave={() => setHovered(null)} style={{ ...styles.productCard, ...(hovered === product.id ? styles.productCardHover : {}) }}>
+              <div
+                key={product.id}
+                onMouseEnter={() => setHovered(product.id)}
+                onMouseLeave={() => setHovered(null)}
+                style={{
+                  ...styles.productCard,
+                  ...(hovered === product.id ? styles.productCardHover : {}),
+                }}
+              >
                 <img src={product.image} alt={product.name} style={styles.productImage} />
                 <h2 style={styles.productName}>{product.name}</h2>
                 <p style={styles.productDescription}>{product.description}</p>
                 <p style={styles.productPrice}>
                   ${product.price ? Number(product.price).toFixed(2) : 'N/A'}
                 </p>
-                <button style={styles.addToCartButton} onClick={() => addToCart(product)}>Add to Cart</button>
+                <button
+                  style={{
+                    ...styles.addToCartButton,
+                    ...(hovered === product.id ? styles.addToCartButtonHover : {}),
+                  }}
+                  onClick={() => addToCart(product)}
+                >
+                  Add to Cart
+                </button>
               </div>
             ))
           ) : (
@@ -132,7 +190,7 @@ function Spinner() {
   );
 }
 
-// Styles
+// Styles (same as before)
 const styles = {
   pageContainer: {
     padding: '2rem',
@@ -149,17 +207,36 @@ const styles = {
   },
   mainContent: {
     display: 'flex',
-    flexDirection: 'row', // Keep the filters on the left and products on the right
-    gap: '0', // Removed gap between sections
-    justifyContent: 'flex-start', // Align left to remove additional spacing
+    flexDirection: 'row',
+    gap: '0',
+    justifyContent: 'flex-start',
+  },
+  toggleButtonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '10px',
+    transition: 'width 0.3s ease',
+  },
+  toggleButton: {
+    backgroundColor: '#1f1f1f',
+    color: '#fff',
+    border: 'none',
+    padding: '1rem 2rem',
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
+    transition: 'background-color 0.3s ease',
+    width: '100%',
   },
   sidebar: {
-    width: '300px', // Fixed width for the filter sidebar
     backgroundColor: '#1f1f1f',
-    padding: '1.5rem',
     borderRadius: '15px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-    marginBottom: '0', // Removed margin at the bottom
+    overflow: 'hidden',
+    transition: 'width 0.3s ease, padding 0.3s ease',
+    marginTop: '10px', // Move sidebar below button
   },
   filtersContainer: {
     display: 'flex',
@@ -193,42 +270,24 @@ const styles = {
   },
   productGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '1rem', // Reduced gap between products
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '1rem',
     justifyContent: 'center',
-    flex: 1, // Allow grid to take the rest of the space
-  },
-
-  '@media (max-width: 1200px)': {
-    mainContent: {
-      flexDirection: 'column',
-    },
-    sidebar: {
-      width: '100%',
-      marginBottom: '2rem',
-    },
-    productGrid: {
-      gridTemplateColumns: 'repeat(3, 1fr)',
-    },
-  },
-  '@media (max-width: 900px)': {
-    productGrid: {
-      gridTemplateColumns: 'repeat(2, 1fr)',
-    },
-  },
-  '@media (max-width: 600px)': {
-    productGrid: {
-      gridTemplateColumns: 'repeat(1, 1fr)',
-    },
+    flex: 1,
   },
   productCard: {
     backgroundColor: '#1e1e1e',
     padding: '1.5rem',
-    borderRadius: '10px',
+    borderRadius: '12px',
     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.5)',
     textAlign: 'center',
     transition: 'transform 0.3s, box-shadow 0.3s',
     cursor: 'pointer',
+    minHeight: '400px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    overflow: 'hidden',
   },
   productCardHover: {
     transform: 'scale(1.05)',
@@ -236,11 +295,49 @@ const styles = {
   },
   productImage: {
     width: '100%',
-    height: '200px',
+    height: '250px',
     objectFit: 'cover',
     borderRadius: '10px',
     marginBottom: '1rem',
     transition: 'transform 0.3s',
+  },
+  productName: {
+    fontSize: '1.6rem',
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: '1rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+  },
+  productDescription: {
+    fontSize: '1rem',
+    color: '#bbb',
+    marginBottom: '1rem',
+    lineHeight: '1.5',
+    textAlign: 'left',
+  },
+  productPrice: {
+    fontSize: '1.3rem',
+    fontWeight: '600',
+    color: '#80CBC4',
+    marginLeft: 'auto',
+  },
+  addToCartButton: {
+    padding: '0.8rem 1.5rem',
+    fontSize: '1.1rem',
+    fontWeight: 'bold',
+    backgroundColor: '#3C5173',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s, transform 0.3s',
+    marginTop: '1rem',
+    width: '100%',
+  },
+  addToCartButtonHover: {
+    backgroundColor: '#2B3C5A',
+    transform: 'scale(1.05)',
   },
   noProductsMessage: {
     display: 'flex',
@@ -281,4 +378,3 @@ const styles = {
     animationDelay: '-1s',
   },
 };
-

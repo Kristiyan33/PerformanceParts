@@ -1,69 +1,54 @@
-'use client';
+"use client";
 
-export default function CheckoutPage() {
+import { useState } from "react";
+import { useCart } from "../../lib/CartContext"; // Import CartContext
+
+export default function PaymentPage() {
+  const [loading, setLoading] = useState(false);
+  const { cart, calculateTotal } = useCart(); // Get cart items & total price
+
+  const handleCheckout = async () => {
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+
+    setLoading(true);
+
+    const res = await fetch("/api/checkout_sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cartItems: cart }), // Send real cart items
+    });
+
+    const data = await res.json();
+
+    if (data.sessionUrl) {
+      window.location.href = data.sessionUrl; // Redirect to Stripe Checkout
+    } else {
+      alert("Error starting checkout session");
+    }
+    setLoading(false);
+  };
+
   return (
-    <div style={styles.pageContainer}>
-      <h1 style={styles.title}>Checkout</h1>
-      <form style={styles.form}>
-        <div style={styles.formGroup}>
-          <label htmlFor="name" style={styles.label}>Name:</label>
-          <input id="name" type="text" style={styles.input} />
-        </div>
-        <div style={styles.formGroup}>
-          <label htmlFor="address" style={styles.label}>Address:</label>
-          <textarea id="address" style={styles.input}></textarea>
-        </div>
-        <div style={styles.formGroup}>
-          <label htmlFor="card" style={styles.label}>Card Details:</label>
-          <input id="card" type="text" style={styles.input} />
-        </div>
-        <button type="submit" style={styles.submitButton}>
-          Confirm and Pay
-        </button>
-      </form>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>Shopping Cart</h1>
+      {cart.length === 0 ? (
+        <p>Your cart is empty</p>
+      ) : (
+        <ul>
+          {cart.map((item, index) => (
+            <li key={index}>
+              {item.name} - ${item.price} x {item.quantity}
+            </li>
+          ))}
+        </ul>
+      )}
+      <h3>Total: ${calculateTotal()}</h3>
+      <button onClick={handleCheckout} disabled={loading || cart.length === 0}>
+        {loading ? "Processing..." : "Pay Now"}
+      </button>
     </div>
-  );
+  )
 }
-
-// Styles
-const styles = {
-  pageContainer: {
-    padding: '2rem',
-    fontFamily: 'Montserrat, sans-serif',
-  },
-  title: {
-    fontSize: '2.5rem',
-    textAlign: 'center',
-    marginBottom: '2rem',
-  },
-  form: {
-    maxWidth: '500px',
-    margin: '0 auto',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  label: {
-    fontSize: '1rem',
-    marginBottom: '0.5rem',
-  },
-  input: {
-    padding: '0.8rem',
-    fontSize: '1rem',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-  },
-  submitButton: {
-    padding: '1rem',
-    fontSize: '1rem',
-    backgroundColor: '#28a745',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-};
