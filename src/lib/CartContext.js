@@ -1,26 +1,37 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../lib/firebase'; // Adjust the path to match your Firebase config
 
-// Create the Cart context
 const CartContext = createContext();
 
-// CartProvider component
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
+  const [userId, setUserId] = useState(null);
 
-  // Load cart from localStorage on initial render
+  // Load cart from localStorage when the user logs in
   useEffect(() => {
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      setCart(JSON.parse(storedCart));
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+        const storedCart = localStorage.getItem(`cart_${user.uid}`);
+        setCart(storedCart ? JSON.parse(storedCart) : []);
+      } else {
+        setUserId(null);
+        setCart([]); // Clear cart in state (but keep localStorage intact)
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
+    if (userId) {
+      localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
+    }
+  }, [cart, userId]);
 
   const addToCart = (product) => {
     setCart((prevCart) => {
@@ -48,11 +59,9 @@ export function CartProvider({ children }) {
 
   const clearCart = () => setCart([]);
 
-  // Calculate the total price of all items in the cart
   const calculateTotal = () =>
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  // Calculate the total number of items in the cart
   const getTotalItemCount = () =>
     cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -64,8 +73,8 @@ export function CartProvider({ children }) {
         removeFromCart,
         updateQuantity,
         clearCart,
-        calculateTotal, // Include calculateTotal in context value
-        getTotalItemCount, // Include getTotalItemCount in context value
+        calculateTotal,
+        getTotalItemCount,
       }}
     >
       {children}
@@ -73,8 +82,6 @@ export function CartProvider({ children }) {
   );
 }
 
-// Custom hook to use the CartContext
 export function useCart() {
   return useContext(CartContext);
 }
-
