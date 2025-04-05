@@ -11,34 +11,23 @@ export default function ShopPage() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    category: '',
-    priceRange: '',
-  });
+  const [filters, setFilters] = useState({ category: '', priceRange: '' });
   const [hovered, setHovered] = useState(null);
   const { cart, addToCart } = useCart();
   const router = useRouter();
   const [user, setUser] = useState(null);
-
-  // State for controlling the visibility of the filter sidebar
-  const [collapsed, setCollapsed] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    // Check if user is logged in
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
-        router.push('/login'); // Redirect to login if not logged in
-      } else {
-        setUser(currentUser);
-      }
+      if (!currentUser) router.push('/login');
+      else setUser(currentUser);
     });
-
     return () => unsubscribe();
   }, [router]);
 
   useEffect(() => {
-    if (!user) return; // Only fetch products if user is authenticated
-
+    if (!user) return;
     const fetchProducts = async () => {
       setLoading(true);
       const collectionRef = collection(db, 'products');
@@ -51,132 +40,114 @@ export default function ShopPage() {
       setFilteredProducts(productsData);
       setLoading(false);
     };
-
     fetchProducts();
   }, [user]);
 
   const handleFilterChange = (key, value) => {
-    setFilters((prevFilters) => ({ ...prevFilters, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   useEffect(() => {
     let filtered = products;
-
     if (filters.category) {
       filtered = filtered.filter((product) => product.category === filters.category);
     }
-
     if (filters.priceRange) {
-      const [minPrice, maxPrice] = filters.priceRange.split('-').map(Number);
-      filtered = filtered.filter((product) => product.price >= minPrice && product.price <= maxPrice);
+      const [min, max] = filters.priceRange.split('-').map(Number);
+      filtered = filtered.filter((product) => product.price >= min && product.price <= max);
     }
-
     setFilteredProducts(filtered);
   }, [filters, products]);
 
-  const closeModal = () => setHovered(null);
-
-  if (loading) {
-    return <Spinner />;
-  }
+  if (loading) return <Spinner />;
 
   return (
     <div style={styles.pageContainer}>
       <h1 style={styles.title}>Shop High-Performance Parts</h1>
 
-      <div style={styles.mainContent}>
-        {/* Sidebar Toggle Button */}
-        <div
-          style={{
-            ...styles.toggleButtonContainer,
-            width: collapsed ? '50px' : '300px', // Width expands with filter section
-          }}
+      {/* Filters */}
+      <div style={styles.filterRow}>
+        <select
+          style={styles.filterDropdown}
+          value={filters.category}
+          onChange={(e) => handleFilterChange('category', e.target.value)}
         >
-          <button
-            style={styles.toggleButton}
-            onClick={() => setCollapsed((prevState) => !prevState)}
-          >
-            {collapsed ? '>' : '<'}
-          </button>
-        </div>
-
-        {/* Filter Section */}
-        <div
-          style={{
-            ...styles.sidebar,
-            width: collapsed ? '0' : '300px', // Sidebar expands with the button
-            padding: collapsed ? '0' : '1.5rem',
-            visibility: collapsed ? 'hidden' : 'visible',
-            opacity: collapsed ? '0' : '1',
-            transition: 'width 0.3s ease, opacity 0.3s ease, visibility 0.3s ease',
-          }}
+          <option value="">All categories</option>
+          <option value="suspension">Suspension</option>
+          <option value="engine">Engine</option>
+          <option value="aerodynamics">Aerodynamics</option>
+        </select>
+        <select
+          style={styles.filterDropdown}
+          value={filters.priceRange}
+          onChange={(e) => handleFilterChange('priceRange', e.target.value)}
         >
-          <div style={styles.filtersContainer}>
-            <select
-              style={styles.filterDropdown}
-              value={filters.category}
-              onChange={(e) => handleFilterChange('category', e.target.value)}
-            >
-              <option value="">All categories</option>
-              <option value="suspension">Suspension</option>
-              <option value="engine">Engine</option>
-              <option value="aerodynamics">Aerodynamics</option>
-            </select>
-            <select
-              style={styles.filterDropdown}
-              value={filters.priceRange}
-              onChange={(e) => handleFilterChange('priceRange', e.target.value)}
-            >
-              <option value="">All price ranges</option>
-              <option value="0-499">$0 - $499</option>
-              <option value="500-1999">$500 - $1999</option>
-              <option value="2000-4999">$2000 - $4999</option>
-              <option value="4999-9999">$4999 - $9999</option>
-            </select>
-            <button
-              style={styles.clearFiltersButton}
-              onClick={() => setFilters({ category: '', priceRange: '' })}
-            >
-              Clear Filters
-            </button>
-          </div>
-        </div>
+          <option value="">All price ranges</option>
+          <option value="0-499">$0 - $499</option>
+          <option value="500-1999">$500 - $1999</option>
+          <option value="2000-4999">$2000 - $4999</option>
+          <option value="5000-9999">$5000 - $9999</option>
+        </select>
+        <button
+          style={styles.clearFiltersButton}
+          onClick={() => setFilters({ category: '', priceRange: '' })}
+        >
+          Clear
+        </button>
+      </div>
 
-        {/* Products Grid */}
-        <div style={styles.productGrid}>
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                onMouseEnter={() => setHovered(product.id)}
-                onMouseLeave={() => setHovered(null)}
-                style={{
-                  ...styles.productCard,
-                  ...(hovered === product.id ? styles.productCardHover : {}),
-                }}
-              >
-                <img src={product.image} alt={product.name} style={styles.productImage} />
-                <h2 style={styles.productName}>{product.name}</h2>
-                <p style={styles.productDescription}>{product.description}</p>
-                <p style={styles.productPrice}>
-                  ${product.price ? Number(product.price).toFixed(2) : 'N/A'}
-                </p>
+      {/* Product Grid */}
+      <div style={styles.productGrid}>
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              onMouseEnter={() => setHovered(product.id)}
+              onMouseLeave={() => setHovered(null)}
+              onClick={() => setSelectedProduct(product)}
+              style={{
+                ...styles.productCard,
+                ...(hovered === product.id ? styles.productCardHover : {}),
+              }}
+            >
+              <img src={product.image} alt={product.name} style={styles.productImage} />
+              <h2 style={styles.productName}>{product.name}</h2>
+              <p style={styles.productDescription}>{product.description}</p>
+              <p style={styles.productPrice}>
+                ${product.price ? Number(product.price).toFixed(2) : 'N/A'}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div style={styles.noProductsMessage}>No products match your filters.</div>
+        )}
+      </div>
+
+      {/* Modal */}
+      {selectedProduct && (
+        <div style={styles.modalOverlay} onClick={() => setSelectedProduct(null)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <button style={styles.closeButton} onClick={() => setSelectedProduct(null)}>×</button>
+            <div style={styles.modalBody}>
+              <img src={selectedProduct.image} alt={selectedProduct.name} style={styles.modalImage} />
+              <div style={styles.modalText}>
+                <h2 style={styles.modalTitle}>{selectedProduct.name}</h2>
+                <p style={styles.modalDescription}>{selectedProduct.description}</p>
+                <p style={styles.modalPrice}>${Number(selectedProduct.price).toFixed(2)}</p>
                 <button
-                  style={{
-                    ...styles.addToCartButton,
-                    ...(hovered === product.id ? styles.addToCartButtonHover : {}),
+                  style={styles.modalAddToCart}
+                  onClick={() => {
+                    addToCart(selectedProduct);
+                    setSelectedProduct(null);
                   }}
-                  onClick={() => addToCart(product)}
                 >
                   Add to Cart
                 </button>
               </div>
-            ))
-          ) : (
-            <div style={styles.noProductsMessage}>No products match your filters.</div>
-          )}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -190,71 +161,35 @@ function Spinner() {
   );
 }
 
-// Styles (same as before)
 const styles = {
   pageContainer: {
     padding: '2rem',
     backgroundColor: '#121212',
     fontFamily: 'Poppins, sans-serif',
     color: '#e0e0e0',
+    minHeight: '100vh',
   },
   title: {
     fontSize: '3rem',
     textAlign: 'center',
-    color: '#ffffff',
     marginBottom: '2rem',
     fontWeight: 'bold',
   },
-  mainContent: {
+  filterRow: {
     display: 'flex',
-    flexDirection: 'row',
-    gap: '0',
-    justifyContent: 'flex-start',
-  },
-  toggleButtonContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '10px',
-    transition: 'width 0.3s ease',
-  },
-  toggleButton: {
-    backgroundColor: '#1f1f1f',
-    color: '#fff',
-    border: 'none',
-    padding: '1rem 2rem',
-    fontSize: '1.2rem',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
-    transition: 'background-color 0.3s ease',
-    width: '100%',
-  },
-  sidebar: {
-    backgroundColor: '#1f1f1f',
-    borderRadius: '15px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-    overflow: 'hidden',
-    transition: 'width 0.3s ease, padding 0.3s ease',
-    marginTop: '10px', // Move sidebar below button
-  },
-  filtersContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
     gap: '1rem',
+    marginBottom: '2rem',
+    justifyContent: 'center',
   },
   filterDropdown: {
     padding: '0.8rem 1rem',
-    fontSize: '1.1rem',
-    border: '1px solid #3c3c3c',
-    borderRadius: '12px',
+    fontSize: '1rem',
+    borderRadius: '10px',
     backgroundColor: '#292929',
     color: '#e0e0e0',
-    transition: 'border-color 0.3s, background-color 0.3s',
+    border: '1px solid #444',
     outline: 'none',
-    cursor: 'pointer',
-    width: '100%',
+    minWidth: '180px',
   },
   clearFiltersButton: {
     padding: '0.8rem 1.2rem',
@@ -265,98 +200,145 @@ const styles = {
     border: '2px solid #e74c3c',
     borderRadius: '12px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s, color 0.3s, transform 0.3s',
-    width: '100%',
   },
   productGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '1rem',
-    justifyContent: 'center',
-    flex: 1,
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '1.5rem',
   },
   productCard: {
     backgroundColor: '#1e1e1e',
     padding: '1.5rem',
     borderRadius: '12px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.5)',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
     textAlign: 'center',
     transition: 'transform 0.3s, box-shadow 0.3s',
     cursor: 'pointer',
-    minHeight: '400px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    overflow: 'hidden',
   },
   productCardHover: {
     transform: 'scale(1.05)',
-    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.8)',
+    boxShadow: '0 8px 20px rgba(0,0,0,0.8)',
   },
   productImage: {
     width: '100%',
-    height: '250px',
+    height: '200px',
     objectFit: 'cover',
     borderRadius: '10px',
     marginBottom: '1rem',
-    transition: 'transform 0.3s',
   },
   productName: {
-    fontSize: '1.6rem',
+    fontSize: '1.4rem',
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: '1rem',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
+    marginBottom: '0.5rem',
   },
   productDescription: {
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     color: '#bbb',
     marginBottom: '1rem',
-    lineHeight: '1.5',
-    textAlign: 'left',
   },
   productPrice: {
-    fontSize: '1.3rem',
+    fontSize: '1.1rem',
     fontWeight: '600',
     color: '#80CBC4',
-    marginLeft: 'auto',
   },
-  addToCartButton: {
+  noProductsMessage: {
+    fontSize: '1.5rem',
+    textAlign: 'center',
+    marginTop: '3rem',
+    color: '#ccc',
+  },
+
+  // Modal
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backdropFilter: 'blur(8px)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    padding: '1rem',
+  },
+  modalContent: {
+    backgroundColor: '#1f1f1f',
+    borderRadius: '15px',
+    padding: '1.5rem',
+    width: '60vw',
+    height: '30vw', // 2:1 aspect ratio
+    maxWidth: '900px',
+    maxHeight: '450px',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  modalBody: {
+    display: 'flex',
+    gap: '2rem',
+    height: '100%',
+  },
+  modalImage: {
+    width: '50%',
+    height: '100%',
+    objectFit: 'cover',
+    borderRadius: '10px',
+  },
+  modalText: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    color: '#eee',
+  },
+  modalTitle: {
+    fontSize: '2rem',
+    fontWeight: 'bold',
+  },
+  modalDescription: {
+    fontSize: '1rem',
+    color: '#ccc',
+    marginTop: '1rem',
+    flexGrow: 1,
+  },
+  modalPrice: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    color: '#80cbc4',
+    marginTop: '1rem',
+  },
+  modalAddToCart: {
     padding: '0.8rem 1.5rem',
     fontSize: '1.1rem',
     fontWeight: 'bold',
     backgroundColor: '#3C5173',
     color: '#ffffff',
     border: 'none',
-    borderRadius: '12px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s, transform 0.3s',
-    marginTop: '1rem',
-    width: '100%',
-  },
-  addToCartButtonHover: {
-    backgroundColor: '#2B3C5A',
-    transform: 'scale(1.05)',
-  },
-  noProductsMessage: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    height: '50vh',
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    color: '#ffffff',
-    backgroundColor: '#121212',
     borderRadius: '10px',
-    margin: '2rem auto',
+    cursor: 'pointer',
+    marginTop: '1rem',
   },
+  closeButton: {
+    position: 'absolute',
+    top: '10px',
+    right: '15px',
+    fontSize: '2rem',
+    background: 'none',
+    border: 'none',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+
+  // Spinner
   spinner: {
     width: '40px',
     height: '40px',
     position: 'relative',
-    margin: '0 auto',
+    margin: '100px auto',
   },
   doubleBounce1: {
     width: '100%',

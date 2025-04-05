@@ -37,7 +37,6 @@ export default function CartPage() {
       alert("Something went wrong while proceeding to checkout");
     }
   };
-  
 
   return (
     <div style={styles.pageContainer}>
@@ -77,7 +76,7 @@ export default function CartPage() {
                   style={styles.removeButton}
                   onClick={() => removeFromCart(item.id)}
                 >
-                  Remove
+                  <i className="fas fa-trash-alt"></i> Remove
                 </button>
               </div>
             ))}
@@ -108,61 +107,70 @@ export default function CartPage() {
 // Styles
 const styles = {
   pageContainer: {
-    padding: '2rem',
+    padding: '3rem 2rem',
     fontFamily: 'Montserrat, sans-serif',
     backgroundColor: '#121212',
     marginBottom: '0px',
+    minHeight: '100vh',
   },
   title: {
-    fontSize: '2.8rem',
+    fontSize: '3rem',
     textAlign: 'center',
     marginBottom: '2rem',
-    color: '#2C3E50',
+    color: '#f8f8f8',
+    fontWeight: '700',
+    letterSpacing: '1px',
   },
   emptyMessage: {
     textAlign: 'center',
-    fontSize: '1.4rem',
-    color: '#34495E',
+    fontSize: '1.6rem',
+    color: '#7F8C8D',
+    fontWeight: '500',
   },
   cartContent: {
     display: 'flex',
     justifyContent: 'space-between',
     gap: '2rem',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    flexWrap: 'wrap',
   },
   cartItemsContainer: {
     display: 'flex',
     flexDirection: 'column',
     gap: '1.5rem',
-    flex: 3, // Taking up more space on the left side
+    flex: '3 1 0',
+    maxWidth: '800px',
   },
   cartItem: {
     display: 'flex',
     alignItems: 'center',
-    gap: '1rem',
-    backgroundColor: '#1f1f1f',
-    padding: '1rem',
-    borderRadius: '8px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
-    transition: 'box-shadow 0.3s ease',
+    gap: '1.5rem',
+    backgroundColor: '#1F1F1F',
+    padding: '1rem 1.5rem',
+    borderRadius: '10px',
+    boxShadow: '0 6px 15px rgba(0, 0, 0, 0.3)',
+    transition: 'box-shadow 0.3s ease, transform 0.3s ease',
+    cursor: 'pointer',
   },
   itemImage: {
-    width: '100px',
-    height: '100px',
+    width: '120px',
+    height: '120px',
     objectFit: 'cover',
     borderRadius: '8px',
   },
   itemDetails: {
     flex: 1,
-    color: '#fff',
+    color: '#FFF',
   },
   itemName: {
-    fontSize: '1.2rem',
+    fontSize: '1.3rem',
     marginBottom: '0.5rem',
     fontWeight: '600',
-    color: '#2C3E50',
+    color: '#E74C3C',
   },
   itemPrice: {
-    fontSize: '1rem',
+    fontSize: '1.1rem',
     marginBottom: '0.5rem',
     color: '#7F8C8D',
   },
@@ -173,64 +181,74 @@ const styles = {
   },
   quantityInput: {
     width: '60px',
-    padding: '0.5rem',
+    padding: '0.6rem',
     fontSize: '1rem',
-    borderRadius: '4px',
+    borderRadius: '5px',
     border: '1px solid #BDC3C7',
+    backgroundColor: '#292929',
+    color: '#fff',
   },
   removeButton: {
-    padding: '0.5rem 1rem',
+    padding: '0.6rem 1.2rem',
     backgroundColor: '#E74C3C',
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '6px',
     cursor: 'pointer',
+    fontWeight: '600',
     transition: 'background-color 0.3s ease',
+    marginLeft: 'auto',
   },
   summaryContainer: {
-    flex: 1, // Taking up less space on the right
+    flex: '1 1 0',
     textAlign: 'center',
     backgroundColor: '#34495E',
-    padding: '1.5rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    padding: '2rem',
+    borderRadius: '10px',
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
     marginTop: '2rem',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between', // Ensures content is spaced out
-    height: '100%', // To allow the buttons to be at the bottom
+    justifyContent: 'space-between',
+    height: 'auto',
+    minHeight: '300px',
   },
   totalPriceContainer: {
-    marginBottom: '1rem',
+    marginBottom: '1.5rem',
   },
   totalPrice: {
-    fontSize: '1.6rem',
-    marginBottom: '1rem',
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: '1.8rem',
+    fontWeight: '700',
+    color: '#FFF',
+    marginBottom: '1.5rem',
   },
   buttonsContainer: {
-    marginTop: 'auto', // This pushes the buttons to the bottom of the container
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   clearCartButton: {
-    padding: '0.8rem 1.5rem',
+    padding: '0.8rem 2rem',
     marginRight: '1rem',
-    fontSize: '1rem',
+    fontSize: '1.2rem',
     backgroundColor: '#E74C3C',
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '6px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease',
+    fontWeight: '600',
+    flex: '1',
   },
   checkoutButton: {
-    padding: '0.8rem 1.5rem',
-    fontSize: '1rem',
+    padding: '0.8rem 2rem',
+    fontSize: '1.2rem',
     backgroundColor: '#28A745',
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '6px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease',
+    fontWeight: '600',
+    flex: '1',
   },
 };
