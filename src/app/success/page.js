@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useCart } from "../../lib/CartContext";  // Import your CartContext
-import { useRouter } from "next/navigation";  // Updated import for Next 13+ 
+import { useRouter } from "next/navigation";  // Updated import for Next 13+
 
 export default function Success() {
   const { clearCart } = useCart();  // Clear cart function from the context
@@ -10,10 +10,15 @@ export default function Success() {
   const hasClearedCart = useRef(false); // Track if cart has already been cleared
 
   useEffect(() => {
-    // Ensure the cart is cleared only once after the successful payment
+    // Only clear the cart once after successful payment
     if (!hasClearedCart.current) {
+      console.log("Clearing the cart...");
+
+      // Clear the cart in context
       clearCart();
-      hasClearedCart.current = true; // Mark cart as cleared
+
+      // Mark cart as cleared
+      hasClearedCart.current = true;
     }
   }, [clearCart]);
 

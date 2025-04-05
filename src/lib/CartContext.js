@@ -57,7 +57,13 @@ export function CartProvider({ children }) {
     );
   };
 
-  const clearCart = () => setCart([]);
+  // Updated clearCart function to remove from both state and localStorage
+  const clearCart = () => {
+    setCart([]); // Clear the cart in context
+    if (userId) {
+      localStorage.removeItem(`cart_${userId}`); // Clear the cart in localStorage
+    }
+  };
 
   const calculateTotal = () =>
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
