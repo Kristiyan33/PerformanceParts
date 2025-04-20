@@ -1,277 +1,224 @@
-'use client'; // To use React hooks
+'use client'
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { auth } from '../lib/firebase'; // Import Firebase auth object
-import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import Firebase functions for auth
-import { useCart } from '../lib/CartContext'; // Import the CartContext
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import { auth } from "../lib/firebase"
+import { onAuthStateChanged, signOut } from "firebase/auth"
+import { useCart } from "../lib/CartContext"
+import { useRouter } from "next/navigation"
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [hoveredLink, setHoveredLink] = useState(null);
-  const { cart } = useCart();
-  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
-  const router = useRouter();
-  
-  // State for checking if the user is admin
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [hoveredLink, setHoveredLink] = useState(null)
+  const { cart } = useCart()
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0)
+  const router = useRouter()
+
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user);
-        // Check if the user is admin by their email
-        if (user.email && user.email.includes('admin@')) {
-          setIsAdmin(true);
+        setUser(user)
+        if (user.email && user.email.includes("admin@")) {
+          setIsAdmin(true)
         } else {
-          setIsAdmin(false);
+          setIsAdmin(false)
         }
       } else {
-        setUser(null);
-        setIsAdmin(false);
+        setUser(null)
+        setIsAdmin(false)
       }
-    });
+    })
 
-    return () => unsubscribe();
-  }, []);
+    return () => unsubscribe()
+  }, [])
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      setDropdownOpen(false);
+      await signOut(auth)
+      setDropdownOpen(false)
     } catch (err) {
-      console.error('Error signing out: ', err);
+      console.error("Error signing out: ", err)
     }
-  };
+  }
 
-  const handleHover = (link) => setHoveredLink(link);
+  const handleHover = (link) => setHoveredLink(link)
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
 
   return (
-    <nav style={styles.navbar}>
-      <div style={styles.logoContainer}>
-        <Link href="/" style={styles.logoLink}>
-          <img src="/images/site logo.png" alt="Logo" style={styles.logo} />
-        </Link>
-        <Link href="/" style={styles.performanceText}>
-          Performance Parts
+    <nav className="w-full flex justify-between items-center px-4 md:px-8 py-4 bg-[#3C5173] text-white shadow-md relative">
+      {/* Logo Container */}
+      <div className="flex items-center">
+        <Link href="/" className="flex items-center">
+          <img src="/images/site logo.png" alt="Logo" className="h-16 md:h-20 w-auto" />
+          <span className="ml-3 text-xl md:text-2xl font-bold text-[#E2DAD6]">Performance Parts</span>
         </Link>
       </div>
 
-      <div style={styles.navLinks}>
+      {/* Mobile Menu Button */}
+      <div className="md:hidden cursor-pointer" onClick={toggleMobileMenu}>
+        <div className="w-7 h-1 bg-white mb-1.5"></div>
+        <div className="w-7 h-1 bg-white mb-1.5"></div>
+        <div className="w-7 h-1 bg-white"></div>
+      </div>
+
+      {/* Navigation Links Container */}
+      <div
+        className={`${
+          isMobileMenuOpen
+            ? "absolute top-full left-0 right-0 flex flex-col items-center bg-[#3C5173] shadow-lg z-50 py-4 space-y-4"
+            : "hidden md:flex items-center space-x-6"
+        }`}
+      >
         <Link
           href="/modYourCar"
-          style={hoveredLink === 'how-to-mod-your-car' ? { ...styles.navLink, ...styles.hoveredLink } : styles.navLink}
-          onMouseEnter={() => handleHover('how-to-mod-your-car')}
+          className={`text-[#E2DAD6] px-6 py-4 text-xl rounded-md transition-all duration-300 ${
+            hoveredLink === "how-to-mod-your-car"
+              ? "text-[#80CBC4] bg-[#50688C] shadow-md"
+              : "hover:text-[#80CBC4] hover:bg-[#50688C]"
+          }`}
+          onMouseEnter={() => handleHover("how-to-mod-your-car")}
           onMouseLeave={() => setHoveredLink(null)}
+          onClick={() => setIsMobileMenuOpen(false)}
         >
           Тунинговай колата си!
         </Link>
+
         <Link
           href="/shop"
-          style={hoveredLink === 'shop' ? { ...styles.navLink, ...styles.hoveredLink } : styles.navLink}
-          onMouseEnter={() => handleHover('shop')}
+          className={`text-[#E2DAD6] px-6 py-4 text-xl rounded-md transition-all duration-300 ${
+            hoveredLink === "shop" ? "text-[#80CBC4] bg-[#50688C] shadow-md" : "hover:text-[#80CBC4] hover:bg-[#50688C]"
+          }`}
+          onMouseEnter={() => handleHover("shop")}
           onMouseLeave={() => setHoveredLink(null)}
+          onClick={() => setIsMobileMenuOpen(false)}
         >
           Магазин
         </Link>
+
         <Link
           href="/contacts"
-          style={hoveredLink === 'contacts' ? { ...styles.navLink, ...styles.hoveredLink } : styles.navLink}
-          onMouseEnter={() => handleHover('contacts')}
+          className={`text-[#E2DAD6] px-6 py-4 text-xl rounded-md transition-all duration-300 ${
+            hoveredLink === "contacts"
+              ? "text-[#80CBC4] bg-[#50688C] shadow-md"
+              : "hover:text-[#80CBC4] hover:bg-[#50688C]"
+          }`}
+          onMouseEnter={() => handleHover("contacts")}
           onMouseLeave={() => setHoveredLink(null)}
+          onClick={() => setIsMobileMenuOpen(false)}
         >
           Контакти
         </Link>
 
         {user ? (
-          <div style={styles.iconsContainer}>
+          <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
             {isAdmin ? (
               <button
-                onClick={() => router.push('/admin')} // Redirect to admin page
-                style={hoveredLink === 'admin' ? { ...styles.navLink, ...styles.hoveredLink } : styles.navLink}
-                onMouseEnter={() => handleHover('admin')}
-          onMouseLeave={() => setHoveredLink(null)}
+                onClick={() => {
+                  router.push("/admin")
+                  setIsMobileMenuOpen(false)
+                }}
+                className={`text-[#E2DAD6] px-6 py-4 text-xl rounded-md transition-all duration-300 ${
+                  hoveredLink === "admin"
+                    ? "text-[#80CBC4] bg-[#50688C] shadow-md"
+                    : "hover:text-[#80CBC4] hover:bg-[#50688C]"
+                }`}
+                onMouseEnter={() => handleHover("admin")}
+                onMouseLeave={() => setHoveredLink(null)}
               >
                 Админ панел
               </button>
             ) : (
-              <div style={styles.cartButton}>
-                <Link href="/cart" style={styles.cartLink}>
-                  <img src="/images/cart icon.png" alt="Cart" style={styles.cartIcon} />
-                  {cartItemCount > 0 && <span style={styles.cartBadge}>{cartItemCount}</span>}
+              <div className="relative">
+                <Link href="/cart" className="block" onClick={() => setIsMobileMenuOpen(false)}>
+                  <img src="/images/cart icon.png" alt="Cart" className="h-14 w-14 md:h-16 md:w-16" />
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-[#1F2937] text-white text-sm font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                      {cartItemCount}
+                    </span>
+                  )}
                 </Link>
               </div>
             )}
 
             <div
-              style={styles.profileButton}
+              className="relative"
               onMouseEnter={() => setDropdownOpen(true)}
               onMouseLeave={() => setDropdownOpen(false)}
             >
-              <img src="/images/user icon.png" alt="Profile" style={styles.profileIcon} />
+              <img
+                src="/images/user icon.png"
+                alt="Profile"
+                className="h-12 w-12 md:h-14 md:w-14 rounded-full cursor-pointer"
+              />
+
               <div
-                style={{
-                  ...styles.dropdownMenu,
-                  opacity: dropdownOpen ? 1 : 0,
-                  transform: dropdownOpen ? 'translateY(0)' : 'translateY(-10px)',
-                  pointerEvents: dropdownOpen ? 'auto' : 'none',
-                }}
+                className={`absolute right-0 mt-2 w-52 bg-[#1F2937] rounded-md shadow-lg z-10 transition-all duration-300 ${
+                  dropdownOpen
+                    ? "opacity-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 -translate-y-2 pointer-events-none"
+                }`}
               >
-                <Link href="/account" style={styles.dropdownLink}>
+                <Link
+                  href="/account"
+                  className="block px-5 py-4 text-base text-white hover:bg-[#3C5173]"
+                  onClick={() => {
+                    setDropdownOpen(false)
+                    setIsMobileMenuOpen(false)
+                  }}
+                >
                   Профил
                 </Link>
-                <button onClick={handleSignOut} style={styles.dropdownLink}>
+                <button
+                  onClick={() => {
+                    handleSignOut()
+                    setIsMobileMenuOpen(false)
+                  }}
+                  className="block w-full text-left px-5 py-4 text-base text-white hover:bg-[#3C5173]"
+                >
                   Излез
                 </button>
               </div>
             </div>
           </div>
         ) : (
-          <>
+          <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
             <Link
               href="/login"
-              style={hoveredLink === 'login' ? { ...styles.navLink, ...styles.hoveredLink } : styles.navLink}
-              onMouseEnter={() => handleHover('login')}
+              className={`text-[#E2DAD6] px-6 py-4 text-xl rounded-md transition-all duration-300 ${
+                hoveredLink === "login"
+                  ? "text-[#80CBC4] bg-[#50688C] shadow-md"
+                  : "hover:text-[#80CBC4] hover:bg-[#50688C]"
+              }`}
+              onMouseEnter={() => handleHover("login")}
               onMouseLeave={() => setHoveredLink(null)}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Влез!
             </Link>
+
             <Link
               href="/register"
-              style={hoveredLink === 'register' ? { ...styles.navLink, ...styles.hoveredLink } : styles.navLink}
-              onMouseEnter={() => handleHover('register')}
+              className={`text-[#E2DAD6] px-6 py-4 text-xl rounded-md transition-all duration-300 ${
+                hoveredLink === "register"
+                  ? "text-[#80CBC4] bg-[#50688C] shadow-md"
+                  : "hover:text-[#80CBC4] hover:bg-[#50688C]"
+              }`}
+              onMouseEnter={() => handleHover("register")}
               onMouseLeave={() => setHoveredLink(null)}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Регистрирай се!
             </Link>
-          </>
+          </div>
         )}
       </div>
     </nav>
-  );
+  )
 }
-
-const styles = {
-  navbar: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '1rem 2rem',
-    backgroundColor: '#3C5173',
-    color: '#fff',
-    fontFamily: 'Roboto, Arial, Helvetica, sans-serif',
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-  },
-  logoContainer: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  logoLink: {
-    textDecoration: 'none',
-  },
-  logo: {
-    height: '80px',
-    width: 'auto',
-  },
-  performanceText: {
-    marginLeft: '12px',
-    fontSize: '1.8rem',
-    color: '#E2DAD6',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    transition: 'color 0.3s',
-  },
-  navLinks: {
-    display: 'flex',
-    gap: '2rem',
-    alignItems: 'center',
-  },
-  navLink: {
-    color: '#E2DAD6',
-    textDecoration: 'none',
-    fontSize: '1.6rem',
-    transition: 'color 0.3s ease, background-color 0.3s ease',
-    cursor: 'pointer',
-    padding: '10px 20px',
-    borderRadius: '5px',
-  },
-  hoveredLink: {
-    color: '#80CBC4',
-    backgroundColor: '#50688C',
-    padding: '12px 22px',
-    borderRadius: '8px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)',
-  },
-  iconsContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '2.5rem',
-  },
-  cartButton: {
-    position: 'relative',
-  },
-  cartLink: {
-    textDecoration: 'none',
-  },
-  cartIcon: {
-    width: '60px',
-    height: '60px',
-  },
-  cartBadge: {
-    position: 'absolute',
-    top: '-10px',
-    right: '-10px',
-    backgroundColor: '#1F2937',
-    color: '#FFF',
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    borderRadius: '20px',
-    padding: '4px 8px',
-  },
-  profileButton: {
-    position: 'relative',
-    cursor: 'pointer',
-  },
-  profileIcon: {
-    width: '50px',
-    height: '50px',
-    borderRadius: '50%',
-    transition: 'transform 0.3s ease',
-  },
-  dropdownMenu: {
-    position: 'absolute',
-    top: '100%',
-    right: '0',
-    backgroundColor: '#1F2937',
-    borderRadius: '8px',
-    boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.2)',
-    zIndex: 1,
-    width: '200px',
-    transition: 'opacity 0.3s ease, transform 0.3s ease',
-  },
-  dropdownLink: {
-    display: 'block',
-    padding: '15px 20px',
-    color: '#fff',
-    textDecoration: 'none',
-    fontSize: '1.4rem',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-    borderBottom: '1px solid #3C5173',
-  },
-  adminButton: {
-    color: '#E2DAD6',
-    textDecoration: 'none',
-    fontSize: '1.6rem',
-    transition: 'color 0.3s ease, background-color 0.3s ease',
-    cursor: 'pointer',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    backgroundColor: 'transparent',
-  },
-};

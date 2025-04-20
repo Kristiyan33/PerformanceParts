@@ -1,73 +1,134 @@
 'use client';
 
-import { useEffect, useRef } from "react";
-import { useCart } from "../../lib/CartContext";  // Import your CartContext
-import { useRouter } from "next/navigation";  // Updated import for Next 13+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCart } from '../../lib/CartContext';
 
 export default function Success() {
-  const { clearCart } = useCart();  // Clear cart function from the context
+  const { clearCart } = useCart();
+  const [redirecting, setRedirecting] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+
   const router = useRouter();
-  const hasClearedCart = useRef(false); // Track if cart has already been cleared
 
   useEffect(() => {
-    // Only clear the cart once after successful payment
-    if (!hasClearedCart.current) {
-      console.log("Clearing the cart...");
+    // Clear cart safely
+    clearCart();
 
-      // Clear the cart in context
-      clearCart();
+    // Set timeout for redirect message and button
+    const timeout = setTimeout(() => {
+      setRedirecting(true);
+      setShowButton(true);
+    }, 2000);
 
-      // Mark cart as cleared
-      hasClearedCart.current = true;
-    }
+    return () => clearTimeout(timeout);
   }, [clearCart]);
 
+  const handleRedirect = () => {
+    router.push('/');
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        background: "url('/placeholder-image.jpg') no-repeat center center/cover",  // Replace with your image
-        color: "white",
-        textAlign: "center",
-        padding: "1rem",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          borderRadius: "10px",
-          padding: "3rem",
-          maxWidth: "600px",
-          width: "100%",
-        }}
-      >
-        <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
-          Payment Successful! ✅
-        </h1>
-        <p style={{ fontSize: "1.5rem" }}>
-          Thank you for your purchase. Your order is being processed.
-        </p>
-        <div style={{ marginTop: "2rem" }}>
-          <button
-            style={{
-              padding: "1rem 2rem",
-              fontSize: "1.2rem",
-              backgroundColor: "#28A745",
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              transition: "background-color 0.3s",
-            }}
-            onClick={() => router.push("/")}
-          >
-            Go to Home
-          </button>
+    <div style={styles.page}>
+      <div style={styles.overlay}>
+        <div style={styles.card}>
+          <div style={styles.iconWrapper}>
+            <div style={styles.checkmark}>✔</div>
+          </div>
+          <h1 style={styles.heading}>Плащането е успешно! ✅</h1>
+          <p style={styles.text}>Благодарим ви за вашата поръчка.</p>
+          {redirecting && (
+            <p style={styles.redirectText}>Ще бъдете пренасочени скоро...</p>
+          )}
+          {showButton && (
+            <button style={styles.button} onClick={handleRedirect}>
+              Обратно към началната страница
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+const styles = {
+  page: {
+    backgroundImage: 'url(/images/success-bg.jpg)', // Add your image to public/images/
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    height: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'Montserrat, sans-serif',
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    padding: '4rem 2rem',
+    borderRadius: '15px',
+    maxWidth: '600px',
+    width: '90%',
+    color: 'white',
+    textAlign: 'center',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
+  },
+  card: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  iconWrapper: {
+    backgroundColor: '#28a745',
+    width: '80px',
+    height: '80px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '1.5rem',
+    animation: 'pop 0.6s ease',
+  },
+  checkmark: {
+    fontSize: '2.5rem',
+    color: 'white',
+  },
+  heading: {
+    fontSize: '2rem',
+    marginBottom: '0.5rem',
+    fontWeight: '700',
+  },
+  text: {
+    fontSize: '1.2rem',
+    color: '#ccc',
+    marginBottom: '1rem',
+  },
+  redirectText: {
+    fontSize: '1rem',
+    color: '#aaa',
+    marginBottom: '1.5rem',
+  },
+  button: {
+    padding: '12px 24px',
+    fontSize: '1.1rem',
+    backgroundColor: '#1e88e5',
+    border: 'none',
+    borderRadius: '8px',
+    color: '#fff',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+  },
+};
+
+// You can add keyframe animations globally in your styles/globals.css:
+/*
+@keyframes pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+*/

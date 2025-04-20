@@ -1,204 +1,217 @@
 'use client';
 
+import Link from "next/link"; // Import Link for navigation
+
 export default function HowToModYourCar() {
   return (
     <div style={styles.pageContainer}>
-      {/* Popular Mods Section */}
-      <div style={styles.section}>
-        <h1 style={styles.title}>Популярни модификации</h1>
-
-        {/* Engine Mods */}
-        <div style={styles.modSection}>
-          <h2 style={styles.subtitle}>Подобрения на двигателя</h2>
-          <div style={styles.container}>
-            <img src="images/Engine mods.webp" alt="Engine Mod" style={styles.image} />
-            <div style={styles.textContent}>
-              <p style={styles.text}>
-                Подобренията на двигателя са сърцето на силовия тунинг, като ви позволяват значително да подобрите мощността и реакцията на вашия автомобил. Ето някои популярни модификации:
-              </p>
-              <ul style={styles.list}>
-                <li>
-                  <strong>Cold Air Intakes:</strong> Тези системи заменят ограничаващите фабрични въздушни филтри, за да доставят по-студен, по-гъст въздух в двигателя, което води до повишена мощност и по-агресивен звук.
-                </li>
-                <li>
-                  <strong>Системи за принудително пълнене:</strong> Добавянето на турбина или суперчарджър вкарва по голямо количество въздух в двигателя, като значително увеличава мощността и въртящия момент.
-                </li>
-                <li>
-                  <strong>Изпускателни системи:</strong> Спортните изпускателни системи намаляват загубите и подобряват потока, отключвайки допълнителна мощност.
-                </li>
-                <li>
-                  <strong>ECU настройка:</strong> Настройката на компютъра на автомобила настройва горивните карти, времето за запалване и нивото на налягането за турбинирани двигатели за максимална производителност.
-                </li>
-              </ul>
-              <button style={styles.button}>Пазарувай модификации на двигателя</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Suspension and Brakes */}
-        <div style={styles.modSection}>
-          <h2 style={styles.subtitle}>Модернизации на окачване и спирачки</h2>
-          <div style={styles.container}>
-            <img src="images/suspension mods.jpg" alt="Suspension and Brakes" style={styles.image} />
-            <div style={styles.textContent}>
-              <p style={styles.text}>
-                Модернизациите на окачването и спирачките подобряват управлението, безопасността и общото шофиране на автомобила. Ето някои опции за постигане на перфектната настройка:
-              </p>
-              <ul style={styles.list}>
-                <li>
-                  <strong>Coilovers:</strong> Регулируемите амортисьори и пружини позволяват прецизно настройване на височината на колата и твърдостта на окачването.
-                </li>
-                <li>
-                  <strong>Спортни спирачки:</strong> Вентилираните дискове подобряват охлаждането, а много-буталните спирачни апарати осигуряват подобрена спирачната сила.
-                </li>
-                <li>
-                  <strong>Стабилизаращи щанги:</strong> Намаляват накланянето на шасито при агресивно завиване, подобрявайки стабилността.
-                </li>
-                <li>
-                  <strong>Китове за камбър:</strong> Позволяват настройване на изправянето на колелата за оптимално сцепление и износване на гумите.
-                </li>
-              </ul>
-              <button style={styles.button}>Пазарувай окачване и спирачки</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Aerodynamics */}
-        <div style={styles.modSection}>
-          <h2 style={styles.subtitle}>Аеродинамични модификации</h2>
-          <div style={styles.container}>
-            <img src="images/aero mods.webp" alt="Aerodynamic Enhancements" style={styles.image} />
-            <div style={styles.textContent}>
-              <p style={styles.text}>
-                Аеродинамичните модификации подобряват производителността, като намаляват съпротивлението на въздуха и увеличават притискателната сила.
-              </p>
-              <ul style={styles.list}>
-                <li>
-                  <strong>Спойлери:</strong> Задните спойлери пренасочват въздушния поток, за да генерират притискателна сила и да увеличат сцеплението.
-                </li>
-                <li>
-                  <strong>Сплитери:</strong> Те помагат за управлението на въздушния поток под шасито, намалявайки подемната сила.
-                </li>
-                <li>
-                  <strong>Дифузьори:</strong> Контролират въздушния поток, излизащ от изпод автомобила, намалявайки аеродинамичното съпротивление.
-                </li>
-              </ul>
-              <button style={styles.button}>Пазарувай аеро модификации</button>
-            </div>
-          </div>
-        </div>
+      {/* Header */}
+      <div style={styles.header}>
+        <h1 style={styles.mainTitle}>🔧 Как да модифицираш своя автомобил</h1>
+        <p style={styles.tagline}>Открий най-добрите подобрения за стил, мощност и безопасност.</p>
       </div>
 
-      {/* Legal Compliance Section */}
-      <div style={styles.section}>
-        <h1 style={styles.title}>Правна съвместимост</h1>
-        <div style={styles.contentRow}>
-          {/* Emissions Compliance */}
-          <div style={styles.subSection}>
-            <h2 style={styles.subtitle}>Съответствие с емисиите</h2>
-            <div style={styles.container}>
-              <p style={styles.text}>
-                Поддържането на съответствие с емисиите осигурява, че автомобилът ви отговаря на екологичните регулации.
-              </p>
-              <ul style={styles.list}>
-                <li>
-                  <strong>Катализатори с висока пропускливост:</strong> Подменяйте фабричните катализатори с високопропускливи, които запазват стандартите за емисии и подобряват потока на газовете.
-                </li>
-                <li>
-                  <strong>Изпускателни системи:</strong> Изберете системи, които запазват компонентите за контрол на емисиите, като сензори за кислород и катализатори.
-                </li>
-                <li>
-                  <strong>ECU настройка:</strong> Уверете се, че настройката на ECU отговаря на изискванията за емисии или използва софтуер, одобрен от CARB.
-                </li>
-              </ul>
-            </div>
-          </div>
+      {/* Popular Mods */}
+      <Section
+        title="Популярни модификации"
+        mods={[
+          {
+            title: 'Подобрения на двигателя',
+            image: '/images/Engine mods.webp',
+            description: 'Подобренията на двигателя са сърцето на силовия тунинг...',
+            items: [
+              'Cold Air Intakes: По-студен въздух за повече мощност.',
+              'Системи за принудително пълнене: Турбо или суперчарджър за максимално ускорение.',
+              'Изпускателни системи: Подобрен поток, по-добър звук.',
+              'ECU настройка: Прецизен контрол върху двигателя.'
+            ],
+            buttonText: 'Пазарувай модификации на двигателя',
+            link: '/shop?category=engine' // Example of linking to shop with a category filter
+          },
+          {
+            title: 'Окачване и спирачки',
+            image: '/images/suspension mods.jpg',
+            description: 'Подобри управлението, сцеплението и безопасността с правилното окачване...',
+            items: [
+              'Coilovers: Регулируема височина и твърдост.',
+              'Спортни спирачки: Вентилирани дискове и по-добро спиране.',
+              'Стабилизиращи щанги: По-малко наклон при завиване.',
+              'Китове за камбър: Максимално сцепление.'
+            ],
+            buttonText: 'Пазарувай окачване и спирачки',
+            link: '/shop?category=suspension' // Example of linking to shop with a category filter
+          },
+          {
+            title: 'Аеродинамични модификации',
+            image: '/images/aero mods.webp',
+            description: 'Подобри аеродинамиката и визията на колата си...',
+            items: [
+              'Спойлери: Притискателна сила и агресивен стил.',
+              'Сплитери: Контрол над въздушния поток.',
+              'Дифузьори: Минимално съпротивление, максимална стабилност.'
+            ],
+            buttonText: 'Пазарувай аеро модификации',
+            link: '/shop?category=aero' // Example of linking to shop with a category filter
+          }
+        ]}
+      />
 
-          {/* Safety Standards */}
-          <div style={styles.subSection}>
-            <h2 style={styles.subtitle}>Стандарти за безопасност</h2>
-            <div style={styles.container}>
-              <p style={styles.text}>
-                Модификациите трябва да отговарят на стандартите за безопасност, за да защитят както водача, така и останалите участници в движението.
-              </p>
-              <ul style={styles.list}>
-                <li>Използвайте компоненти, одобрени от DOT за гуми, светлини и стъкла.</li>
-                <li>Уверете се, че всички части са професионално инсталирани, за да се избегнат рискове за безопасността.</li>
-                <li>Запазете документацията за всички модификации, за да улесните проверките.</li>
-              </ul>
-            </div>
-          </div>
+      {/* Legal Section */}
+      <div style={styles.section}>
+        <h2 style={styles.sectionTitle}>📋 Правна съвместимост</h2>
+        <div style={styles.legalWrapper}>
+          <LegalCard
+            title="Съответствие с емисиите"
+            points={[
+              'Катализатори с висока пропускливост – екологични и ефективни.',
+              'Запазване на контролни сензори и катализатори.',
+              'CARB-одобрени ECU настройки.'
+            ]}
+          />
+          <LegalCard
+            title="Стандарти за безопасност"
+            points={[
+              'Компоненти с DOT сертификат.',
+              'Професионален монтаж за сигурност.',
+              'Документация за всички модове.'
+            ]}
+          />
         </div>
       </div>
     </div>
   );
 }
 
+// Section Component
+const Section = ({ title, mods }) => (
+  <div style={styles.section}>
+    <h2 style={styles.sectionTitle}>{title}</h2>
+    {mods.map((mod, idx) => (
+      <div key={idx} style={styles.card}>
+        <img src={mod.image} alt={mod.title} style={styles.image} />
+        <div style={styles.cardContent}>
+          <h3 style={styles.cardTitle}>{mod.title}</h3>
+          <p style={styles.cardText}>{mod.description}</p>
+          <ul style={styles.list}>
+            {mod.items.map((item, i) => (
+              <li key={i} style={styles.listItem}>✅ {item}</li>
+            ))}
+          </ul>
+          {/* Button that links to the Shop page with category filter */}
+          <Link href={mod.link} style={styles.button}>
+            {mod.buttonText}
+          </Link>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+// Legal Card
+const LegalCard = ({ title, points }) => (
+  <div style={styles.legalCard}>
+    <h3 style={styles.cardTitle}>{title}</h3>
+    <ul style={styles.list}>
+      {points.map((point, idx) => (
+        <li key={idx} style={styles.listItem}>📌 {point}</li>
+      ))}
+    </ul>
+  </div>
+);
+
+// Styles
 const styles = {
   pageContainer: {
-    padding: '2rem',
-    fontFamily: 'Roboto, sans-serif',
-    backgroundColor: '#1f1f1f',
+    backgroundColor: '#111',
     color: '#fff',
+    padding: '2rem',
+    fontFamily: `'Segoe UI', sans-serif`,
   },
-  section: {
+  header: {
+    textAlign: 'center',
     marginBottom: '3rem',
   },
-  title: {
-    fontSize: '2.5rem',
-    color: '#3C5173',
-    marginBottom: '1.5rem',
+  mainTitle: {
+    fontSize: '3rem',
+    color: '#70c0ff',
+    marginBottom: '0.5rem',
+  },
+  tagline: {
+    fontSize: '1.3rem',
+    color: '#ccc',
+  },
+  section: {
+    marginBottom: '4rem',
+  },
+  sectionTitle: {
+    fontSize: '2.2rem',
+    color: '#ffbe5c',
+    marginBottom: '2rem',
     textAlign: 'center',
   },
-  modSection: {
-    marginBottom: '3.5rem',
-  },
-  subtitle: {
-    fontSize: '3rem',
-    marginBottom: '1rem',
-    color: '#3C5173',
-  },
-  container: {
+  card: {
     display: 'flex',
-    gap: '2rem',
-    alignItems: 'flex-start',
     flexWrap: 'wrap',
-    backgroundColor: '#2c2c2c',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    gap: '2rem',
+    backgroundColor: '#1b1b1b',
+    borderRadius: '12px',
+    padding: '1.5rem',
+    marginBottom: '2rem',
+    boxShadow: '0 0 15px rgba(0, 0, 0, 0.4)',
   },
   image: {
-    width: '40%',
-    borderRadius: '20px',
+    flex: '1 1 300px',
+    maxWidth: '400px',
+    borderRadius: '10px',
+    objectFit: 'cover',
   },
-  textContent: {
-    flex: 1,
+  cardContent: {
+    flex: '2 1 500px',
   },
-  text: {
-    fontSize: '1.5rem',
-    lineHeight: '1.8',
+  cardTitle: {
+    fontSize: '1.8rem',
+    marginBottom: '0.5rem',
+    color: '#4fc3f7',
+  },
+  cardText: {
+    fontSize: '1.1rem',
+    marginBottom: '1rem',
+    color: '#ddd',
   },
   list: {
-    paddingLeft: '1.5rem',
+    paddingLeft: '1rem',
     marginBottom: '1rem',
-    fontSize: '1rem'
+  },
+  listItem: {
+    fontSize: '1rem',
+    marginBottom: '0.5rem',
+    lineHeight: '1.5',
   },
   button: {
-    padding: '0.8rem 1.5rem',
-    fontSize: '1rem',
-    backgroundColor: '#3C5173',
-    color: '#f5eded',
+    padding: '0.7rem 1.4rem',
+    backgroundColor: '#4fc3f7',
+    color: '#000',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '6px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s',
+    fontWeight: 'bold',
+    fontSize: '1rem',
+    transition: 'all 0.3s ease',
+    textDecoration: 'none', // To ensure it looks like a button
+    display: 'inline-block', // So it behaves like a button
+    textAlign: 'center',
   },
-  buttonHover: {
-    backgroundColor: '#7fa1c3f',
+  legalWrapper: {
+    display: 'flex',
+    gap: '2rem',
+    flexWrap: 'wrap',
+    marginTop: '1.5rem',
   },
-  subSection: {
-    flex: 1,
-    marginBottom: '1.5rem',
+  legalCard: {
+    backgroundColor: '#1b1b1b',
+    padding: '1.5rem',
+    borderRadius: '10px',
+    flex: '1 1 45%',
+    boxShadow: '0 0 10px rgba(255, 190, 92, 0.2)',
   },
 };

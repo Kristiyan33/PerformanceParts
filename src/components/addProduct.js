@@ -40,7 +40,7 @@ const AddProduct = () => {
       <input
         type="text"
         name="name"
-        placeholder="Product Name"
+        placeholder="Име на продукта"
         value={product.name}
         onChange={handleChange}
         required
@@ -48,7 +48,7 @@ const AddProduct = () => {
       />
       <textarea
         name="description"
-        placeholder="Description"
+        placeholder="Описание"
         value={product.description}
         onChange={handleChange}
         required
@@ -57,7 +57,7 @@ const AddProduct = () => {
       <input
         type="number"
         name="price"
-        placeholder="Price"
+        placeholder="Цена"
         value={product.price}
         onChange={handleChange}
         required
@@ -66,7 +66,7 @@ const AddProduct = () => {
       <input
         type="text"
         name="category"
-        placeholder="Category"
+        placeholder="Категория"
         value={product.category}
         onChange={handleChange}
         required
@@ -75,13 +75,13 @@ const AddProduct = () => {
       <input
         type="text"
         name="image"
-        placeholder="Image URL"
+        placeholder="URL адрес на снимката"
         value={product.image}
         onChange={handleChange}
         required
         style={styles.input}
       />
-      <button type="submit" style={styles.submitButton}>Add Product</button>
+      <button type="submit" style={styles.submitButton}>Добави продукт</button>
     </form>
   );
 };
@@ -91,31 +91,46 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
+    backgroundColor: '#2c2c2c',
+    padding: '2rem',
+    borderRadius: '10px',
+    boxShadow: '0 6px 15px rgba(0,0,0,0.4)',
+    maxWidth: '800px',
+    margin: '0 auto', // центриране
   },
   input: {
-    padding: '1rem',
+    padding: '0.8rem 1rem',
     fontSize: '1rem',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    backgroundColor: '#fff',
+    border: '1px solid #444',
+    borderRadius: '6px',
+    backgroundColor: '#1F2937',
+    color: '#fff',
+    outline: 'none',
   },
   textarea: {
-    padding: '1rem',
+    padding: '0.8rem 1rem',
     fontSize: '1rem',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    backgroundColor: '#fff',
+    border: '1px solid #444',
+    borderRadius: '6px',
+    backgroundColor: '#1F2937',
+    color: '#fff',
+    height: '6rem',
     resize: 'vertical',
+    outline: 'none',
   },
   submitButton: {
-    padding: '1rem 2rem',
-    backgroundColor: '#28a745',
+    padding: '0.9rem',
+    backgroundColor: '#3C5173',
     color: '#fff',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
+    fontWeight: '600',
     fontSize: '1rem',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
   }
 };
+
+
 
 export default AddProduct;

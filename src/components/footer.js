@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Link from "next/link";
 import { useState } from "react";
@@ -17,55 +17,37 @@ export default function Footer() {
         </Link>
       </div>
       <div style={styles.rightSection}>
-        <div style={styles.socialAndContact}>
-          <a
-            href="https://instagram.com"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div style={styles.linksRow}>
+          <Link
+            href="/modYourCar"
             style={
-              hoveredLink === "instagram"
-                ? { ...styles.socialLink, ...styles.hoveredLink }
-                : styles.socialLink
+              hoveredLink === "modYourCar"
+                ? { ...styles.link, ...styles.hoveredLink }
+                : styles.link
             }
-            onMouseEnter={() => handleHover("instagram")}
+            onMouseEnter={() => handleHover("modYourCar")}
             onMouseLeave={handleHoverOut}
           >
-            Instagram
-          </a>
-          <a
-            href="https://facebook.com"
-            target="_blank"
-            rel="noopener noreferrer"
+            Тунинговай колата си!
+          </Link>
+          <Link
+            href="/shop"
             style={
-              hoveredLink === "facebook"
-                ? { ...styles.socialLink, ...styles.hoveredLink }
-                : styles.socialLink
+              hoveredLink === "shop"
+                ? { ...styles.link, ...styles.hoveredLink }
+                : styles.link
             }
-            onMouseEnter={() => handleHover("facebook")}
+            onMouseEnter={() => handleHover("shop")}
             onMouseLeave={handleHoverOut}
           >
-            Facebook
-          </a>
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={
-              hoveredLink === "twitter"
-                ? { ...styles.socialLink, ...styles.hoveredLink }
-                : styles.socialLink
-            }
-            onMouseEnter={() => handleHover("twitter")}
-            onMouseLeave={handleHoverOut}
-          >
-            Twitter
-          </a>
+            Магазин
+          </Link>
           <Link
             href="/contacts"
             style={
               hoveredLink === "contacts"
-                ? { ...styles.contactLink, ...styles.hoveredLink }
-                : styles.contactLink
+                ? { ...styles.link, ...styles.hoveredLink }
+                : styles.link
             }
             onMouseEnter={() => handleHover("contacts")}
             onMouseLeave={handleHoverOut}
@@ -83,63 +65,86 @@ export default function Footer() {
 
 const styles = {
   footer: {
-    backgroundColor: "#1F2937", // Dark gray background
-    color: "#E5E7EB", // Lighter gray text
+    backgroundColor: "#1F2937",
+    color: "#E5E7EB",
     padding: "3rem 2rem",
     display: "flex",
+    flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    flexWrap: "wrap",
+    gap: "2rem",
     fontFamily: "Roboto, Arial, Helvetica, sans-serif",
   },
   leftSection: {
     flex: 1,
     display: "flex",
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   rightSection: {
-    flex: 0.1,
+    flex: 1,
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start",
+    alignItems: "flex-end",
     gap: "1rem",
   },
   brandLink: {
-    color: "#F9FAFB", // Bright white for branding
+    color: "#F9FAFB",
     textDecoration: "none",
-    transition: "color 0.3s ease",
-    fontSize: "3rem",
+    fontSize: "2.5rem",
     fontWeight: "bold",
+    transition: "color 0.3s ease",
   },
-  socialAndContact: {
+  linksRow: {
     display: "flex",
-    flexDirection: "column",
+    flexWrap: "wrap",
     gap: "1rem",
+    justifyContent: "flex-end",
   },
-  socialLink: {
-    color: "#9CA3AF", // Muted gray for social links
+  link: {
+    color: "#9CA3AF",
     textDecoration: "none",
-    fontSize: "1.5rem",
-    transition: "color 0.3s ease, transform 0.3s ease, padding 0.4s ease", // Added padding transition
-    padding: "10px 20px", // Default padding
-  },
-  contactLink: {
-    color: "#9CA3AF", // Consistent muted gray for links
-    textDecoration: "none",
-    fontSize: "1.5rem",
-    transition: "color 0.3s ease, transform 0.3s ease, padding 0.4s ease", // Added padding transition
-    padding: "10px 20px", // Default padding
-  },
-  copyText: {
-    fontSize: "1rem",
-    color: "#6B7280", // Subtle muted text for copyright
-    marginTop: "1rem",
+    fontSize: "1.2rem",
+    padding: "10px 16px",
+    transition: "all 0.3s ease",
+    borderRadius: "4px",
   },
   hoveredLink: {
-    color: "#80CBC4", // Brighter color when hovered
-    backgroundColor: "#50688C", // Background color when hovered
-    padding: "12px 24px", // Increased padding for hover
-    borderRadius: "5px",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
-    transform: "scale(1.02)", // Subtle scaling for smoother effect
+    color: "#80CBC4",
+    backgroundColor: "#374151",
+    transform: "scale(1.05)",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+  },
+  copyText: {
+    fontSize: "0.9rem",
+    color: "#6B7280",
+  },
+
+  // Media Query for responsiveness
+  "@media (max-width: 768px)": {
+    footer: {
+      flexDirection: "column",
+      alignItems: "center",
+    },
+    leftSection: {
+      flex: "none",
+      marginBottom: "1rem",
+    },
+    brandLink: {
+      fontSize: "2rem", // Slightly smaller font for mobile
+    },
+    rightSection: {
+      alignItems: "center", // Center the content for smaller screens
+      marginTop: "1rem",
+    },
+    linksRow: {
+      justifyContent: "center", // Center links in mobile view
+    },
+    link: {
+      fontSize: "1rem", // Slightly smaller font for mobile
+      padding: "8px 12px", // Less padding on mobile
+    },
+    copyText: {
+      fontSize: "0.8rem", // Smaller text for mobile
+    },
   },
 };

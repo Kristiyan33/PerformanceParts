@@ -36,17 +36,28 @@ export default function Contact() {
         </div>
         <div style={styles.rightSection}>
           <h1 style={styles.title}>Свържете се с нас</h1>
-          <p style={styles.contactInfo}><strong>Имейл:</strong> contact@ourwebsite.com</p>
-          <p style={styles.socialMediaTitle}>Последвайте ни:</p>
-          <ul style={styles.socialMediaLinks}>
-            <li><a href="https://facebook.com" style={styles.link}>Facebook</a></li>
-            <li><a href="https://twitter.com" style={styles.link}>Twitter</a></li>
-            <li><a href="https://instagram.com" style={styles.link}>Instagram</a></li>
-          </ul>
+          <p style={styles.contactInfo}><strong>Имейл:</strong> performance-parts@gmail.com</p>
           <form onSubmit={handleSubmit} style={styles.form}>
-            <input type="text" placeholder="Вашето име" value={name} onChange={(e) => setName(e.target.value)} style={styles.input} />
-            <input type="email" placeholder="Вашият имейл" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.input} />
-            <textarea placeholder="Вашето съобщение" value={message} onChange={(e) => setMessage(e.target.value)} style={styles.textarea} />
+            <input
+              type="text"
+              placeholder="Вашето име"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={styles.input}
+            />
+            <input
+              type="email"
+              placeholder="Вашият имейл"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={styles.input}
+            />
+            <textarea
+              placeholder="Вашето съобщение"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              style={styles.textarea}
+            />
             <button type="submit" style={styles.button}>Изпрати</button>
           </form>
           {success && <p style={styles.successMessage}>Съобщението е изпратено успешно!</p>}
@@ -60,10 +71,11 @@ export default function Contact() {
 const styles = {
   pageContainer: {
     position: 'relative',
-    height: '100vh',
+    minHeight: '100vh',
     backgroundImage: 'url("images/contacts page background.jpg")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+    fontFamily: 'Roboto, sans-serif',
   },
   overlay: {
     position: 'absolute',
@@ -71,52 +83,58 @@ const styles = {
     left: 0,
     width: '100%',
     height: '100%',
-    backdropFilter: 'blur(10px)',
+    backdropFilter: 'blur(12px)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   contentContainer: {
     position: 'relative',
     display: 'flex',
     gap: '2rem',
-    padding: '2rem',
+    padding: '3rem',
     justifyContent: 'center',
-    alignItems: 'stretch', // Align sections vertically
+    alignItems: 'stretch',
     height: '100%',
+    zIndex: 1,
   },
   leftSection: {
-    flex: 1,  // Take equal space with the right section
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: '16px',
-    padding: '2rem',
-    color: '#1F2937',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start', // Align content to the top
-    alignItems: 'center',
-  },
-  rightSection: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    background: 'rgba(255, 255, 255, 0.15)',
     borderRadius: '16px',
     padding: '2rem',
-    color: '#1F2937',
+    color: '#ffffff',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+  },
+  rightSection: {
+    flex: 1,
+    background: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: '16px',
+    padding: '2rem',
+    color: '#ffffff',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
   },
   title: {
-    fontSize: '2rem',
+    fontSize: '2.2rem',
     marginBottom: '1rem',
     fontWeight: 'bold',
     textAlign: 'center',
+    textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
   },
   aboutText: {
-    fontSize: '1.5rem',
+    fontSize: '1.4rem',
     textAlign: 'center',
     lineHeight: '1.8',
+    color: '#e0e0e0',
   },
   contactInfo: {
-    fontSize: '1.2rem',
+    fontSize: '1.1rem',
     marginBottom: '1rem',
     textAlign: 'center',
   },
@@ -129,12 +147,14 @@ const styles = {
     listStyleType: 'none',
     padding: 0,
     marginBottom: '1.5rem',
-    textAlign: 'center',
+    display: 'flex',
+    gap: '1rem',
   },
   link: {
     textDecoration: 'none',
-    color: '#1F2937',
+    color: '#fff',
     fontSize: '1rem',
+    transition: 'color 0.3s ease',
   },
   form: {
     display: 'flex',
@@ -144,40 +164,47 @@ const styles = {
     maxWidth: '400px',
   },
   input: {
-    padding: '0.8rem',
+    padding: '0.9rem',
     fontSize: '1rem',
     border: 'none',
-    borderRadius: '4px',
-    backgroundColor: '#1F2937',
+    borderRadius: '8px',
+    backgroundColor: 'rgba(31, 41, 55, 0.8)',
     color: '#fff',
+    outline: 'none',
+    transition: 'box-shadow 0.3s ease',
   },
   textarea: {
-    padding: '0.8rem',
+    padding: '0.9rem',
     fontSize: '1rem',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '8px',
     height: '6rem',
-    backgroundColor: '#1F2937',
+    backgroundColor: 'rgba(31, 41, 55, 0.8)',
     color: '#fff',
+    resize: 'vertical',
+    outline: 'none',
+    transition: 'box-shadow 0.3s ease',
   },
   button: {
     padding: '1rem',
     fontSize: '1rem',
-    backgroundColor: '#3C5173',
+    background: 'linear-gradient(to right, #3C5173, #657fa7)',
     color: '#fff',
     border: 'none',
-    borderRadius: '6px',
+    borderRadius: '8px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s',
+    transition: 'opacity 0.3s ease',
   },
   successMessage: {
     color: '#2ecc71',
     fontSize: '1rem',
     marginTop: '1rem',
+    textAlign: 'center',
   },
   errorMessage: {
     color: '#e74c3c',
     fontSize: '1rem',
     marginTop: '1rem',
+    textAlign: 'center',
   },
 };

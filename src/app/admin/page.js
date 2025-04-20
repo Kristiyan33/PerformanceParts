@@ -18,7 +18,7 @@ const AdminPage = () => {
     }
   }, []);
 
-  if (isAdmin === null) return <div>Loading...</div>;
+  if (isAdmin === null) return <div>Зареждане...</div>;
 
   if (!isAdmin) {
     return (
@@ -36,7 +36,7 @@ const AdminPage = () => {
 
   return (
     <div style={styles.wrapper}>
-      <h1 style={styles.title}>Admin Panel</h1>
+      <h1 style={styles.title}>Администраторски панел</h1>
       <div style={styles.section}>
         <h2 style={styles.sectionTitle}>Добавяне на нов продукт</h2>
         <AddProduct />

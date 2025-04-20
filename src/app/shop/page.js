@@ -63,7 +63,7 @@ export default function ShopPage() {
 
   return (
     <div style={styles.pageContainer}>
-      <h1 style={styles.title}>Shop High-Performance Parts</h1>
+      <h1 style={styles.title}>Пазарувай части за своя автомобил! </h1>
 
       {/* Filters */}
       <div style={styles.filterRow}>
@@ -72,17 +72,17 @@ export default function ShopPage() {
           value={filters.category}
           onChange={(e) => handleFilterChange('category', e.target.value)}
         >
-          <option value="">All categories</option>
-          <option value="suspension">Suspension</option>
-          <option value="engine">Engine</option>
-          <option value="aerodynamics">Aerodynamics</option>
+          <option value="">Всички категории</option>
+          <option value="suspension">Окачване и спирачки</option>
+          <option value="engine">Двигател</option>
+          <option value="aerodynamics">Аеродинамика</option>
         </select>
         <select
           style={styles.filterDropdown}
           value={filters.priceRange}
           onChange={(e) => handleFilterChange('priceRange', e.target.value)}
         >
-          <option value="">All price ranges</option>
+          <option value="">Всички цени</option>
           <option value="0-499">$0 - $499</option>
           <option value="500-1999">$500 - $1999</option>
           <option value="2000-4999">$2000 - $4999</option>
@@ -92,7 +92,7 @@ export default function ShopPage() {
           style={styles.clearFiltersButton}
           onClick={() => setFilters({ category: '', priceRange: '' })}
         >
-          Clear
+          Изчисти филтрите
         </button>
       </div>
 
@@ -119,7 +119,7 @@ export default function ShopPage() {
             </div>
           ))
         ) : (
-          <div style={styles.noProductsMessage}>No products match your filters.</div>
+          <div style={styles.noProductsMessage}>Няма продукти отговарящи на търсенето.</div>
         )}
       </div>
 
@@ -141,7 +141,7 @@ export default function ShopPage() {
                     setSelectedProduct(null);
                   }}
                 >
-                  Add to Cart
+                  Добави към количката
                 </button>
               </div>
             </div>
@@ -180,6 +180,7 @@ const styles = {
     gap: '1rem',
     marginBottom: '2rem',
     justifyContent: 'center',
+    flexWrap: 'wrap', // Allow wrapping if the screen is small
   },
   filterDropdown: {
     padding: '0.8rem 1rem',
@@ -203,9 +204,25 @@ const styles = {
   },
   productGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', // Flexible grid
     gap: '1.5rem',
+    marginTop: '2rem',
   },
+
+  // Ensure 5 items per row on large screens (desktop)
+  '@media (min-width: 768px)': {
+    productGrid: {
+      gridTemplateColumns: 'repeat(5, 1fr)', // 5 items per row on larger screens
+    },
+  },
+
+  // On smaller screens (mobile), 2 items per row
+  '@media (max-width: 768px)': {
+    productGrid: {
+      gridTemplateColumns: 'repeat(2, 1fr)', // 2 items per row on mobile devices
+    },
+  },
+
   productCard: {
     backgroundColor: '#1e1e1e',
     padding: '1.5rem',
@@ -248,7 +265,7 @@ const styles = {
     color: '#ccc',
   },
 
-  // Modal
+  // Modal Styles (Updated for Responsiveness)
   modalOverlay: {
     position: 'fixed',
     top: 0,
@@ -268,9 +285,8 @@ const styles = {
     borderRadius: '15px',
     padding: '1.5rem',
     width: '60vw',
-    height: '30vw', // 2:1 aspect ratio
-    maxWidth: '900px',
-    maxHeight: '450px',
+    maxWidth: '900px',  // Keep max width for large screens
+    maxHeight: '450px', // Keep max height for large screens
     boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
     position: 'relative',
     display: 'flex',
@@ -303,60 +319,100 @@ const styles = {
     fontSize: '1rem',
     color: '#ccc',
     marginTop: '1rem',
-    flexGrow: 1,
+    marginBottom: '1.5rem',
   },
   modalPrice: {
-    fontSize: '1.5rem',
+    fontSize: '1.3rem',
+    color: '#80CBC4',
     fontWeight: 'bold',
-    color: '#80cbc4',
-    marginTop: '1rem',
   },
   modalAddToCart: {
     padding: '0.8rem 1.5rem',
-    fontSize: '1.1rem',
-    fontWeight: 'bold',
-    backgroundColor: '#3C5173',
-    color: '#ffffff',
+    backgroundColor: '#4CAF50',
+    color: 'white',
     border: 'none',
     borderRadius: '10px',
     cursor: 'pointer',
-    marginTop: '1rem',
+    fontWeight: '600',
   },
   closeButton: {
     position: 'absolute',
     top: '10px',
-    right: '15px',
+    right: '10px',
     fontSize: '2rem',
-    background: 'none',
+    backgroundColor: 'transparent',
     border: 'none',
-    color: '#fff',
+    color: '#e74c3c',
     cursor: 'pointer',
   },
 
-  // Spinner
+  // Spinner (for loading)
   spinner: {
     width: '40px',
     height: '40px',
-    position: 'relative',
-    margin: '100px auto',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: '-20px',
+    marginLeft: '-20px',
+    zIndex: '999',
   },
   doubleBounce1: {
     width: '100%',
     height: '100%',
     borderRadius: '50%',
-    backgroundColor: '#3498db',
-    opacity: 0.6,
-    position: 'absolute',
+    backgroundColor: '#4CAF50',
     animation: 'sk-bounce 2s infinite ease-in-out',
+    position: 'absolute',
   },
   doubleBounce2: {
     width: '100%',
     height: '100%',
     borderRadius: '50%',
-    backgroundColor: '#2980b9',
-    opacity: 0.6,
-    position: 'absolute',
+    backgroundColor: '#FFC107',
     animation: 'sk-bounce 2s infinite ease-in-out',
+    position: 'absolute',
     animationDelay: '-1s',
   },
+
+  // Media Queries for responsiveness
+  '@media (max-width: 768px)': {
+    pageContainer: {
+      padding: '1rem', // Less padding on mobile
+    },
+    title: {
+      fontSize: '2.5rem', // Smaller title for mobile
+    },
+    filterRow: {
+      flexDirection: 'row', // Keep filters in a row even on mobile
+      justifyContent: 'center',
+      flexWrap: 'wrap', // Allow wrapping of filters on small screens
+    },
+    productCard: {
+      padding: '1rem', // Smaller padding for cards on mobile
+    },
+    productName: {
+      fontSize: '1.2rem', // Smaller product name for mobile
+    },
+    productPrice: {
+      fontSize: '1rem', // Smaller price text for mobile
+    },
+    modalContent: {
+      width: '80vw', // More responsive modal size for mobile
+      height: 'auto', // Height adjusts for mobile
+    },
+    modalImage: {
+      width: '100%', // Image should scale to 100% on small screens
+    },
+    modalBody: {
+      flexDirection: 'column', // Stack content vertically in modal on mobile
+    },
+    spinner: {
+      width: '30px',
+      height: '30px', // Smaller spinner size for mobile
+    },
+  },
 };
+
+
+
